@@ -4,6 +4,21 @@ using ..QuboSolver
 
 export BruteForce_solver, solve!
 
+@doc raw"""
+    struct BruteForce_solver <: AbstractSolver end
+
+Brute-force solver for QUBO problems.
+
+Exhaustively search through all possible configurations to find the optimal solution. It is not 
+recommended for large problems due to its exponential time and memory complexity. 
+
+!!! warning
+    To use this solver, you need to explicitely import the `BruteForce` module in your code:
+    ```julia
+    using QuboSolver.Solvers.BruteForce
+    ```
+
+"""
 struct BruteForce_solver <: AbstractSolver end
 
 function _test_chunk(problem::QuboProblem, chunk::UnitRange{Int})
@@ -22,6 +37,37 @@ function _test_chunk(problem::QuboProblem, chunk::UnitRange{Int})
     return best_configuration, best_energy
 end
 
+@doc raw"""
+    function solve!(problem::QuboProblem, solver::BruteForce_solver)
+
+Solve the QuboProblem `problem` using the [`BruteForce_solver`](@ref QuboSolver.Solvers.BruteForce.BruteForce_solver).	
+
+Exhaustively search through all possible configurations to find the optimal solution. It is not 
+recommended for large problems due to its exponential time and memory complexity. By default, it
+uses all available threads to parallelize the search.
+
+!!! warning
+    To use this solver, you need to explicitely import the `BruteForce` module in your code:
+    ```julia
+    using QuboSolver.Solvers.BruteForce
+    ```
+
+# Returns
+The optimal solution found by the solver. Metadata include the runtime as `runtime` and the 
+number of threads used as `nthreads`.
+
+# Example
+```jldoctest
+using QuboSolver.Solvers.BruteForce
+
+problem = QuboProblem([0.0 1.0; 1.0 0.0], [1.0, 0.0])
+solution = solve!(problem, BruteForce_solver())
+
+# output
+
+🟦🟦 - Energy: -3.0 - Solver: BruteForce_solver - Metadata count: 2
+```
+"""
 function QuboSolver.solve!(problem::QuboProblem, solver::BruteForce_solver)
     initial_time = time()
 
