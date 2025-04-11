@@ -8,19 +8,87 @@ using Optimisers
 export GCS_solver, solve!, SignRounding, SequentialRounding
 
 @doc raw"""
+    struct GCS_solver <: AbstractSolver end
+
+Variational solver for QUBO problems using GCS states.
+
+Use the GCS algorithm [fioroniEntanglementassisted2025](@cite) to solve the given [`QuboProblem`](@ref QuboSolver.QuboProblem). 
+The analytical form of the GCS states used is
+```math
+\ket{ψ} = \mathcal{U}(x) \mathcal{V}(M) \ket{θ,φ}.
+```
+The operator ``\mathcal{U}(x)`` is a product of single-spin rotations on all particles. The vector
+``x`` determines the rotation axis and angle for each spin. For our implementation, we parametrize
+it in spherical coordinates as 
+```math
+x_i = \begin{bmatrix} r_i \cos(δ_i) \cos(Γ_i) \\ r_i \cos(δ_i) \sin(Γ_i) \\ r_i \sin(δ_i) \end{bmatrix}.
+```
+The operator ``\mathcal{V}(M)`` entangles the qubits via correlated ``σ_z\,σ_z`` rotations. Specifically,
+```math
+\mathcal{V}(M) = \exp(-i \sum_{i,j} M_{ij} σ_z^{(i)} σ_z^{(j)}),
+```
+where ``M`` is a coupling matrix assumed to be symmetric and with zero diagonal.
+Finally, ``\ket{θ,φ}`` is the product state 
+```math
+\ket{θ,φ} = ⊗_i \left(\cos(θ_i/2) \ket{0} + \sin(θ_i/2) e^{i φ_i} \ket{1}\right).
+```
+GCS states are thus obtained by applying an entangling operator to a product state, and then
+applying an additional rotation operator to each qubit.
+
+!!! tip 
+    For more information on the GCS algorithm, see
+    [https://arxiv.org/abs/2501.09078](https://arxiv.org/abs/2501.09078).
+
+!!! warning
+    To use this solver, you need to explicitely import the `GCS` module in your code:
+    ```julia
+    using QuboSolver.Solvers.GCS
+    ```
 """
 struct GCS_solver <: AbstractSolver end
+
 @doc raw"""
+    abstract type RoundingMethod end
+
+Abstract type for a discretization method.
+
+Concrete types should be defined for each discretization method implemented, and they should 
+define the `round_configuration` function.
 """
 abstract type RoundingMethod end
 
 @doc raw"""
+    struct SignRounding <: RoundingMethod end
+
+Discretization method that discretizes the quantum state to a binary configuration setting ``b_i = \text{sign}(σ_z)``.
 """
 struct SignRounding <: RoundingMethod end
+
 @doc raw"""
+    struct SequentialRounding <: RoundingMethod end
+
+Discretization method that implements the sequential rounding algorithm presented in [https://doi.org/10.1137/20M132016X](https://doi.org/10.1137/20M132016X).
 """
 struct SequentialRounding <: RoundingMethod end
+
 @doc raw"""
+    const ParamType{T} = @NamedTuple{
+        t::Vector{T},
+        p::Vector{T},
+        M::Matrix{T},
+        r::Vector{T},
+        d::Vector{T},
+        g::Vector{T},
+    }
+
+Named tuple containing the parameters of the GCS state.
+
+- `t`: vector of angles ``θ``.
+- `p`: vector of angles ``φ``.
+- `M`: matrix of the couplings.
+- `r`: vector of magnitudes ``r``.
+- `d`: vector of angles ``δ``.
+- `g`: vector of angles ``Γ``.
 """
 const ParamType{T} = @NamedTuple{
     t::Vector{T},
@@ -32,6 +100,33 @@ const ParamType{T} = @NamedTuple{
 }
 
 @doc raw"""
+    const TrigType{T} = @NamedTuple{
+        sin_t::Vector{T},
+        cos_t::Vector{T},
+        sin_p::Vector{T},
+        cos_p::Vector{T},
+        sin_d::Vector{T},
+        cos_d::Vector{T},
+        exp_g::Vector{Complex{T}},
+        sin_r::Vector{T},
+        cos_r::Vector{T},
+        exp_M::Matrix{Complex{T}},
+    }
+
+Named tuple containing the trigonometric functions of the parameters of the GCS state.
+
+This is used to avoid recomputing the trigonometric functions multiple times.
+
+- `sin_t`: vector of sine of angles ``θ``.
+- `cos_t`: vector of cosine of angles ``θ``.
+- `sin_p`: vector of sine of angles ``φ``.
+- `cos_p`: vector of cosine of angles ``φ``.
+- `sin_d`: vector of sine of angles ``δ``.
+- `cos_d`: vector of cosine of angles ``δ``.
+- `exp_g`: vector of complex exponentials of angles ``Γ``.
+- `sin_r`: vector of sine of angles ``r``.
+- `cos_r`: vector of cosine of angles ``r``.
+- `exp_M`: matrix of complex exponentials of the couplings.
 """
 const TrigType{T} = @NamedTuple{
     sin_t::Vector{T},
@@ -45,7 +140,49 @@ const TrigType{T} = @NamedTuple{
     cos_r::Vector{T},
     exp_M::Matrix{Complex{T}},
 }
+
 @doc raw"""
+    const TempType{T} = @NamedTuple{
+        Sz::@NamedTuple{a1::Vector{Complex{T}}, a0::Vector{T}},
+        dSz_r::@NamedTuple{a1::Vector{Complex{T}}, a0::Vector{T}},
+        dSz_d::@NamedTuple{a1::Vector{Complex{T}}, a0::Vector{T}},
+        dSz_g::@NamedTuple{a1::Vector{Complex{T}}},
+        Sx::@NamedTuple{a1::Vector{Complex{T}}, a0::Vector{T}},
+        dSx_r::@NamedTuple{a1::Vector{Complex{T}}, a0::Vector{T}},
+        dSx_d::@NamedTuple{a1::Vector{Complex{T}}, a0::Vector{T}},
+        dSx_g::@NamedTuple{a1::Vector{Complex{T}}, a0::Vector{T}},
+        psi::Matrix{Complex{T}},
+        dpsi_t::Matrix{Complex{T}},
+        dpsi_p::Matrix{Complex{T}},
+    }
+
+Named tuple containing temporal variables for the GCS calculations.
+
+- `Sz`: named tuple containing the coefficients for the transformation of the ``σ_z`` operator 
+    via the unitary conjugation ``\mathcal{U}^\dagger \sigma_z \mathcal{U}``. The fields `a1` 
+    and `a0` contain the vectors of coefficients for the transformation of the ``σ_z`(i)`` operator
+    and represent the prefactor of ``\sigma_+`` and ``\sigma_z`` respectively.
+- `dSz_r`: named tuple containing the derivatives w.r.t. ``r`` of the coefficients for the 
+    transformation of the ``σ_z`` operator via the unitary conjugation ``\mathcal{U}^\dagger \sigma_z \mathcal{U}``.
+- `dSz_d`: named tuple containing the derivatives w.r.t. ``δ`` of the coefficients for the 
+    transformation of the ``σ_z`` operator via the unitary conjugation ``\mathcal{U}^\dagger \sigma_z \mathcal{U}``.
+- `dSz_g`: named tuple containing the derivatives w.r.t. ``Γ`` of the coefficients for the 
+    transformation of the ``σ_z`` operator via the unitary conjugation ``\mathcal{U}^\dagger \sigma_z \mathcal{U}``.
+- `Sx`: named tuple containing the coefficients for the transformation of the ``σ_x`` operator
+    via the unitary conjugation ``\mathcal{U}^\dagger \sigma_x \mathcal{U}``. The fields `a1` 
+    and `a0` contain the vectors of coefficients for the transformation of the ``σ_x``(i) operator
+    and represent the prefactor of ``\sigma_+`` and ``\sigma_z`` respectively.
+- `dSx_r`: named tuple containing the derivatives w.r.t. ``r`` of the coefficients for the
+    transformation of the ``σ_x`` operator via the unitary conjugation ``\mathcal{U}^\dagger \sigma_x \mathcal{U}``.
+- `dSx_d`: named tuple containing the derivatives w.r.t. ``δ`` of the coefficients for the
+    transformation of the ``σ_x`` operator via the unitary conjugation ``\mathcal{U}^\dagger \sigma_x \mathcal{U}``.
+- `dSx_g`: named tuple containing the derivatives w.r.t. ``Γ`` of the coefficients for the
+    transformation of the ``σ_x`` operator via the unitary conjugation ``\mathcal{U}^\dagger \sigma_x \mathcal{U}``.
+- `psi`: matrix storing the coefficients of the state ``\ket{θ,φ}``. The first column contains 
+    the amplitudes of the ``\ket{0}`` state and the second column contains the amplitudes of the 
+    ``\ket{1}`` state.
+- `dpsi_t`: matrix storing the derivatives w.r.t. ``θ`` of the coefficients of the state ``\ket{θ,φ}``. 
+- `dpsi_p`: matrix storing the derivatives w.r.t. ``φ`` of the coefficients of the state ``\ket{θ,φ}``.
 """
 const TempType{T} = @NamedTuple{
     Sz::@NamedTuple{a1::Vector{Complex{T}}, a0::Vector{T}},
@@ -62,6 +199,53 @@ const TempType{T} = @NamedTuple{
 }
 
 @doc raw"""
+    const ThreadTempType{T} = @NamedTuple{
+        psi_ket::Matrix{Complex{T}},
+        psi_ket_dM1::Matrix{Complex{T}},
+        psi_ket_dM2::Matrix{Complex{T}},
+        dpsi_t_ket::Matrix{Complex{T}},
+        dpsi_t_bra::Matrix{Complex{T}},
+        dpsi_p_ket::Matrix{Complex{T}},
+        dpsi_p_bra::Matrix{Complex{T}},
+        mat_el::Vector{Complex{T}},
+        mat_el_psi_dpsi_t::Vector{Complex{T}},
+        mat_el_dpsi_t_psi::Vector{Complex{T}},
+        mat_el_psi_dpsi_p::Vector{Complex{T}},
+        mat_el_dpsi_p_psi::Vector{Complex{T}},
+        mat_el_dM1::Vector{Complex{T}},
+        mat_el_dM2::Vector{Complex{T}},
+    }
+
+Named tuple containing the temporal variables for the GCS calculations for each thread.
+
+- `psi_ket`: matrix storing the coefficients of the state ``\ket{θ,φ}``. The first column contains 
+    the amplitudes of the ``\ket{0}`` state and the second column contains the amplitudes of the 
+    ``\ket{1}`` state.
+- `psi_ket_dM1`: matrix storing the coefficients of the state, used to compute the gradient w.r.t. 
+    to the matrix M.
+- `psi_ket_dM2`: matrix storing the coefficients of the state, used to compute the gradient w.r.t. 
+    to the matrix M.
+- `dpsi_t_ket`: matrix storing the coefficients of the state, used to compute the gradient w.r.t. 
+    to the angles ``θ``.
+- `dpsi_t_bra`: matrix storing the coefficients of the state, used to compute the gradient w.r.t.
+    to the angles ``θ``.
+- `dpsi_p_ket`: matrix storing the coefficients of the state, used to compute the gradient w.r.t.
+    to the angles ``φ``.
+- `dpsi_p_bra`: matrix storing the coefficients of the state, used to compute the gradient w.r.t.
+    to the angles ``φ``.
+- `mat_el`: vector storing the single-spin matrix elements for the computed expectation values.
+- `mat_el_psi_dpsi_t`: vector storing the single-spin matrix elements for the computed expectation 
+    values, used to compute the gradient w.r.t. the angles ``θ``.
+- `mat_el_dpsi_t_psi`: vector storing the single-spin matrix elements for the computed expectation
+    values, used to compute the gradient w.r.t. the angles ``θ``.
+- `mat_el_psi_dpsi_p`: vector storing the single-spin matrix elements for the computed expectation
+    values, used to compute the gradient w.r.t. the angles ``φ``.
+- `mat_el_dpsi_p_psi`: vector storing the single-spin matrix elements for the computed expectation
+    values, used to compute the gradient w.r.t. the angles ``φ``.
+- `mat_el_dM1`: vector storing the single-spin matrix elements for the computed expectation
+    values, used to compute the gradient w.r.t. the matrix M.
+- `mat_el_dM2`: vector storing the single-spin matrix elements for the computed expectation
+    values, used to compute the gradient w.r.t. the matrix M.
 """
 const ThreadTempType{T} = @NamedTuple{
     psi_ket::Matrix{Complex{T}},
@@ -81,6 +265,15 @@ const ThreadTempType{T} = @NamedTuple{
 }
 
 @doc raw"""
+    function prod_and_count_zeros(x::Vector{T}) where {T}
+
+Compute the product of the elements of the vector `x` and count the number of zeros.
+
+If the vector `x` does not contain any zeros, the function returns the product of its elements 
+and the flag `-1`.
+If the vector `x` contains one zero, the function returns the product of its non-zero elements 
+and the index of the zero element.
+If the vector `x` contains more than one zero, the function returns `0` and the flag`-2`.
 """
 function prod_and_count_zeros(x::Vector{T}) where {T}
     p = one(T)
@@ -99,6 +292,9 @@ function prod_and_count_zeros(x::Vector{T}) where {T}
 end
 
 @doc raw"""
+    function alloc_trig(z::ParamType{T}) where {T}
+
+Allocate the named tuple containing the trigonometric functions of the parameters of the GCS state.
 """
 function alloc_trig(z::ParamType{T}) where {T}
     return (
@@ -116,6 +312,12 @@ function alloc_trig(z::ParamType{T}) where {T}
 end
 
 @doc raw"""
+    function compute_trig!(trig::TrigType{T}, z::ParamType{T}) where {T}
+
+Compute the trigonometric functions of the parameters of the GCS state and store them in the
+named tuple `trig` in place.
+
+See also [`compute_trig`](#ref).
 """
 function compute_trig!(trig::TrigType{T}, z::ParamType{T}) where {T}
     trig.sin_t .= sin.(z.t ./ 2)
@@ -132,6 +334,12 @@ function compute_trig!(trig::TrigType{T}, z::ParamType{T}) where {T}
 end
 
 @doc raw"""
+    function compute_trig(z::ParamType{T}) where {T}
+
+Compute the trigonometric functions of the parameters of the GCS state and store them in a new
+    named tuple `trig`.
+
+See also [`compute_trig!`](#ref).
 """
 function compute_trig(z::ParamType{T}) where {T}
     trig = alloc_trig(z)
@@ -140,6 +348,9 @@ function compute_trig(z::ParamType{T}) where {T}
 end
 
 @doc raw"""
+    function alloc_temporal(z::ParamType{T}) where {T}
+
+Allocate the named tuple containing the temporal variables for the GCS calculations.
 """
 function alloc_temporal(z::ParamType{T}) where {T}
     N = length(z.t)
@@ -159,6 +370,10 @@ function alloc_temporal(z::ParamType{T}) where {T}
 end
 
 @doc raw"""
+    function alloc_thread_temporal(z::ParamType{T}) where {T}
+
+Allocate the named tuples containing the temporal variables for the GCS calculations for each 
+of the available threads.
 """
 function alloc_thread_temporal(z::ParamType{T}) where {T}
     N = length(z.t)
@@ -183,6 +398,10 @@ function alloc_thread_temporal(z::ParamType{T}) where {T}
 end
 
 @doc raw"""
+    function compute_temporal!(temporal::TempType{T}, trig::TrigType{T}; grad = true) where {T}
+
+Compute the temporal variables for the GCS calculations and store them in place in the named
+tuple `temporal`.
 """
 function compute_temporal!(temporal::TempType{T}, trig::TrigType{T}; grad = true) where {T}
     @inbounds begin
@@ -256,6 +475,10 @@ function compute_temporal!(temporal::TempType{T}, trig::TrigType{T}; grad = true
 end
 
 @doc raw"""
+    function _sum_aligned_namedtuples!(a::ParamType{T}, b::ParamType{T}, b_coeff::T) where {T}
+
+Sum two ParamType named tuples and store the result in place in the first one. The second one is
+multiplied by the coefficient `b_coeff` before being added to the first one.
 """
 function _sum_aligned_namedtuples!(a::ParamType{T}, b::ParamType{T}, b_coeff::T) where {T}
     a.t .+= b_coeff .* b.t
@@ -268,6 +491,10 @@ function _sum_aligned_namedtuples!(a::ParamType{T}, b::ParamType{T}, b_coeff::T)
 end
 
 @doc raw"""
+    function _sum_aligned_namedtuples!(a::ParamType{T}, b::ParamType{T}, b_coeff::T, c::ParamType{T}, c_coeff::T) where {T}
+
+Sum two ParamType named tuples `b` and `c` and store the result in place in the ParamType `a`. 
+Two coefficients `b_coeff` and `c_coeff` are used to scale the contributions of `b` and `c` respectively.
 """
 function _sum_aligned_namedtuples!(
     a::ParamType{T},
@@ -286,6 +513,10 @@ function _sum_aligned_namedtuples!(
 end
 
 @doc raw"""
+    function _symmetrize_M!(M::AbstractMatrix{T}) where {T}
+
+Symmetrize the matrix `M` in place summing the upper and lower triangular parts. The matrix is 
+assumed to be square.
 """
 function _symmetrize_M!(M::AbstractMatrix{T}) where {T}
     @inbounds for i ∈ axes(M, 1)
@@ -299,6 +530,14 @@ function _symmetrize_M!(M::AbstractMatrix{T}) where {T}
 end
 
 @doc raw"""
+    function _setup_initial_conf(::Nothing, N::Int, rng::AbstractRNG, T::Type{T}) where {T}
+
+Initialize the parameters of the GCS state close to the `\ket{+}` state.
+
+## Arguments
+- `N`: number of qubits.
+- `rng`: random number generator.
+- `T`: type of the parameters.
 """
 function _setup_initial_conf(::Nothing, N, rng, T)
     return (
@@ -312,22 +551,50 @@ function _setup_initial_conf(::Nothing, N, rng, T)
 end
 
 @doc raw"""
+    function _setup_initial_conf(initial_conf::ParamType{T}, _, _, _) where {T}
+
+Copy the initial configuration `initial_conf` to avoid modifying the original one.
 """
 _setup_initial_conf(initial_conf::ParamType{T}, _, _, _) where {T} = deepcopy(initial_conf)
 
 @doc raw"""
+    ease(x::AbstractFloat) = acos(1 - 2x) / π
+
+Easing function for the time variable `x ∈ [0, 1]`.
 """
 ease(x::AbstractFloat) = acos(1 - 2x) / π
 
 @doc raw"""
+    a(t::AbstractFloat) = 1 - ease(t)
+    
+Time-dependent coefficient for the transverse field term in the loss function.
 """
 a(t::AbstractFloat) = 1 - ease(t)
 
 @doc raw"""
+    b(t::AbstractFloat) = ease(t)
+
+Time-dependent coefficient for the Ising term in the loss function.
 """
 b(t::AbstractFloat) = ease(t)
 
 @doc raw"""
+    function loss_x(
+        x_loss::Vector{T},
+        trig::TrigType{T},
+        temporal::TempType{T},
+        thread_temporal::Vector{ThreadTempType{T}},
+        x_multithread_params,
+    ) where {T}
+
+compute the transverse field term of the loss function
+
+## Arguments
+- `x_loss`: vector to store the expectation values `⟨σ_x^{(i)}⟩`.
+- `trig`: trigonometric functions of the parameters of the GCS state (assumed to be precomputed).
+- `temporal`: temporal variables for the GCS calculations (assumed to be precomputed).
+- `thread_temporal`: temporal variables for the GCS calculations for each thread.
+- `x_multithread_params`: partitioning of the qubits for the multithreaded computation.
 """
 function loss_x(
     x_loss::Vector{T},
@@ -371,6 +638,22 @@ function loss_x(
 end
 
 @doc raw"""
+    function loss_z(
+        z_loss::Vector{T},
+        trig::TrigType{T},
+        temporal::TempType{T},
+        thread_temporal::Vector{ThreadTempType{T}},
+        x_multithread_params,
+    ) where {T}
+
+Compute the expectation value of the ``\sigma_z`` operator for each qubit in the GCS state.
+
+## Arguments
+- `z_loss`: vector to store the expectation values `⟨σ_z^{(i)}⟩`.
+- `trig`: trigonometric functions of the parameters of the GCS state (assumed to be precomputed).
+- `temporal`: temporal variables for the GCS calculations (assumed to be precomputed).
+- `thread_temporal`: temporal variables for the GCS calculations for each thread.
+- `x_multithread_params`: partitioning of the qubits for the multithreaded computation.
 """
 function loss_z(
     z_loss::Vector{T},
@@ -414,6 +697,24 @@ function loss_z(
 end
 
 @doc raw"""
+    function loss_zz(
+        zz_loss::Vector{T},
+        trig::TrigType{T},
+        temporal::TempType{T},
+        thread_temporal::Vector{ThreadTempType{T}},
+        zz_multithread_params,
+    ) where {T}
+Compute the expectation value of the ``\sigma_z^{(i)} \sigma_z^{(j)}`` operator for each pair of 
+qubits in the GCS state.
+
+## Arguments
+- `zz_loss`: vector to store the expectation values `⟨σ_z^{(i)} σ_z^{(j)}⟩` (only the elements with 
+    `i < j` corresponding to a non-zero coefficient in the QUBO problem are computed).
+- `trig`: trigonometric functions of the parameters of the GCS state (assumed to be precomputed).
+- `temporal`: temporal variables for the GCS calculations (assumed to be precomputed).
+- `thread_temporal`: temporal variables for the GCS calculations for each thread.
+- `zz_multithread_params`: partitioning of the pairs of qubits for the multithreaded computation. 
+    Only the elements with `i < j` corresponding to a non-zero coefficient in the QUBO problem are computed.
 """
 function loss_zz(
     zz_loss::Vector{T},
@@ -516,6 +817,39 @@ function loss_zz(
 end
 
 @doc raw"""
+    function loss(
+        z::ParamType{T},
+        time::AbstractFloat,
+        tf::AbstractFloat,
+        trig::TrigType{T},
+        temporal::TempType{T},
+        thread_temporal::Vector{ThreadTempType{T}},
+        zz_multithread_params,
+        x_multithread_params,
+        compact_W,
+        zz_loss::Vector{T},
+        x_loss::Vector{T},
+    ) where {T}
+
+Compute the loss function for the GCS state.
+
+## Arguments
+- `z`: parameters of the GCS state.
+- `time`: time identifying the current Hamiltonian.
+- `tf`: transverse field strength.
+- `trig`: trigonometric functions of the parameters of the GCS state.
+- `temporal`: temporal variables for the GCS calculations.
+- `thread_temporal`: temporal variables for the GCS calculations for each thread.
+- `zz_multithread_params`: partitioning of the pairs of qubits for the multithreaded computation. 
+    Only the elements with `i < j` corresponding to a non-zero coefficient in the QUBO problem are computed.
+- `x_multithread_params`: partitioning of the qubits for the multithreaded computation.
+- `compact_W`: compact representation of the QUBO matrix. Only the elements with `i < j` 
+    corresponding to a non-zero coefficient in the QUBO problem are stored.
+- `bias`: bias vector of the QUBO problem. If the problem does not have a bias, this argument
+    should be `nothing`, otherwise it should be a vector of the same length as the number of variables.
+- `zz_loss`: vector to store the expectation values `⟨σ_z^{(i)} σ_z^{(j)}⟩` (only the elements with
+    `i < j` corresponding to a non-zero coefficient in the QUBO problem are computed).
+- `x_loss`: vector to store the expectation values `⟨σ_x^{(i)}⟩`.
 """
 function loss(
     z::ParamType{T},
@@ -551,6 +885,26 @@ function loss(
 end
 
 @doc raw"""
+    function loss_x_and_grad!(
+        x_loss::Vector{T},
+        dz_x::Vector{ParamType{T}},
+        trig::TrigType{T},
+        temporal::TempType{T},
+        thread_temporal::Vector{ThreadTempType{T}},
+        x_multithread_params,
+    ) where {T}
+
+Compute the transverse field term of the loss function and its gradient with respect to the
+parameters of the GCS state.
+
+## Arguments
+- `x_loss`: vector to store the expectation values `⟨σ_x^{(i)}⟩`.
+- `dz_x`: vector to store the gradients of the loss function with respect to the parameters of 
+    the GCS state. Each thread has its own gradient ParamType to avoid race conditions.
+- `trig`: trigonometric functions of the parameters of the GCS state (assumed to be precomputed).
+- `temporal`: temporal variables for the GCS calculations (assumed to be precomputed).
+- `thread_temporal`: temporal variables for the GCS calculations for each thread.
+- `x_multithread_params`: partitioning of the qubits for the multithreaded computation.
 """
 function loss_x_and_grad!(
     x_loss::Vector{T},
@@ -765,6 +1119,26 @@ function loss_x_and_grad!(
 end
 
 @doc raw"""
+    function loss_z_and_grad!(
+        z_loss::Vector{T},
+        dz_z::Vector{ParamType{T}},
+        trig::TrigType{T},
+        temporal::TempType{T},
+        thread_temporal::Vector{ThreadTempType{T}},
+        z_multithread_params,
+    ) where {T}
+
+Compute the bias field term of the loss function and its gradient with respect to the parameters 
+of the GCS state.
+
+## Arguments
+- `z_loss`: vector to store the expectation values `⟨σ_z^{(i)}⟩`.
+- `dz_z`: vector to store the gradients of the loss function with respect to the parameters of 
+    the GCS state. Each thread has its own gradient ParamType to avoid race conditions.
+- `trig`: trigonometric functions of the parameters of the GCS state (assumed to be precomputed).
+- `temporal`: temporal variables for the GCS calculations (assumed to be precomputed).
+- `thread_temporal`: temporal variables for the GCS calculations for each thread.
+- `z_multithread_params`: partitioning of the qubits and bias terms for the multithreaded computation
 """
 function loss_z_and_grad!(
     z_loss::Vector{T},
@@ -987,6 +1361,28 @@ function loss_z_and_grad!(
 end
 
 @doc raw"""
+    function loss_zz_and_grad!(
+        zz_loss::Vector{T},
+        dz_zz::Vector{ParamType{T}},
+        trig::TrigType{T},
+        temporal::TempType{T},
+        thread_temporal::Vector{ThreadTempType{T}},
+        zz_multithread_params,
+    ) where {T}
+
+Compute the expectation value of the ``\sigma_z^{(i)} \sigma_z^{(j)}`` operator for each pair of
+qubits in the GCS state and its gradient with respect to the parameters of the GCS state.
+
+## Arguments
+- `zz_loss`: vector to store the expectation values `⟨σ_z^{(i)} σ_z^{(j)}⟩` (only the elements with
+    `i < j` corresponding to a non-zero coefficient in the QUBO problem are computed).
+- `dz_zz`: vector to store the gradients of the loss function with respect to the parameters of
+    the GCS state. Each thread has its own gradient ParamType to avoid race conditions.
+- `trig`: trigonometric functions of the parameters of the GCS state (assumed to be precomputed).
+- `temporal`: temporal variables for the GCS calculations (assumed to be precomputed).
+- `thread_temporal`: temporal variables for the GCS calculations for each thread.
+- `zz_multithread_params`: partitioning of the pairs of qubits for the multithreaded computation. 
+    Only the elements with `i < j` corresponding to a non-zero coefficient in the QUBO problem are computed.
 """
 function loss_zz_and_grad!(
     zz_loss::Vector{T},
@@ -1753,6 +2149,51 @@ function loss_zz_and_grad!(
 end
 
 @doc raw"""
+    loss_and_grad!(
+        l::Vector{T},
+        dz::ParamType{T},
+        z::ParamType{T},
+        time::AbstractFloat,
+        tf::AbstractFloat,
+        trig::TrigType{T},
+        temporal::TempType{T},
+        thread_temporal::Vector{ThreadTempType{T}},
+        zz_multithread_params,
+        x_multithread_params,
+        z_multithread_params,
+        compact_W::Vector{T},
+        zz_loss::Vector{T},
+        x_loss::Vector{T},
+        dz_zz::Vector{ParamType{T}},
+        dz_x::Vector{ParamType{T}},
+    )
+
+Compute the loss and gradients for the Qubo problem.
+
+## Arguments
+- `l`: one-element vector to store the loss inplace.
+- `dz`: ParamType to store the gradients inplace.
+- `z`: ParamType with the current configuration.
+- `time`: time identifying the current Hamiltonian
+- `tf`: transverse field strength
+- `trig`: trigonometric functions of the parameters of the GCS state.
+- `temporal`: temporal variables for the GCS calculations.
+- `thread_temporal`: temporal variables for the GCS calculations for each thread.
+- `zz_multithread_params`: partitioning of the pairs of qubits for the multithreaded computation. 
+    Only the elements with `i < j` corresponding to a non-zero coefficient in the QUBO problem are computed.
+- `x_multithread_params`: partitioning of the qubits for the multithreaded computation.
+- `z_multithread_params`: partitioning of the qubits and bias terms for the multithreaded computation.
+- `compact_W`: compact representation of the QUBO matrix. Only the elements with `i < j` 
+    corresponding to a non-zero coefficient in the QUBO problem are stored.
+- `bias`: bias vector of the QUBO problem. If the problem does not have a bias, this argument
+    should be `nothing`, otherwise it should be a vector of the same length as the number of variables.
+- `zz_loss`: vector to store the expectation values `⟨σ_z^{(i)} σ_z^{(j)}⟩` (only the elements with
+    `i < j` corresponding to a non-zero coefficient in the QUBO problem are computed).
+- `x_loss`: vector to store the expectation values `⟨σ_x^{(i)}⟩`.
+- `dz_zz`: vector to store the gradients of the loss function with respect to the parameters of
+    the GCS state. Each thread has its own gradient ParamType to avoid race conditions.
+- `dz_x`: vector to store the gradients of the loss function with respect to the parameters of
+    the GCS state. Each thread has its own gradient ParamType to avoid race conditions.
 """
 function loss_and_grad!(
     l::Vector{T},
@@ -1837,6 +2278,25 @@ function loss_and_grad!(
 end
 
 @doc raw"""
+    round_configuration(
+        problem::QuboProblem,
+        z::ParamType{T},
+        ::SignRounding,
+        trig::TrigType{T},
+        temporal::TempType{T},
+        thread_temporal::Vector{ThreadTempType{T}},
+        x_multithread_params,
+    )
+
+Get a classical configuration from the GCS state using the SignRounding method.
+
+## Arguments
+- `problem`: [`QuboProblem`](@ref QuboSolver.QuboProblem) object.
+- `z`: ParamType with the current configuration.
+- `trig`: trigonometric functions of the parameters of the GCS state.
+- `temporal`: temporal variables for the GCS calculations.
+- `thread_temporal`: temporal variables for the GCS calculations for each thread.
+- `x_multithread_params`: partitioning of the qubits for the multithreaded computation.
 """
 function round_configuration(
     ::QuboProblem,
@@ -1863,6 +2323,25 @@ function round_configuration(
 end
 
 @doc raw"""
+    round_configuration(
+        problem::QuboProblem,
+        z::ParamType{T},
+        ::SequentialRounding,
+        trig::TrigType{T},
+        temporal::TempType{T},
+        thread_temporal::Vector{ThreadTempType{T}},
+        x_multithread_params,
+    )
+
+Get a classical configuration from the GCS state using the SequentialRounding method.
+
+## Arguments
+- `problem`: [`QuboProblem`](@ref QuboSolver.QuboProblem) object.
+- `z`: ParamType with the current configuration.
+- `trig`: trigonometric functions of the parameters of the GCS state.
+- `temporal`: temporal variables for the GCS calculations.
+- `thread_temporal`: temporal variables for the GCS calculations for each thread.
+- `x_multithread_params`: partitioning of the qubits for the multithreaded computation.
 """
 function round_configuration(
     problem::QuboProblem,
@@ -1897,6 +2376,64 @@ function round_configuration(
 end
 
 @doc raw"""
+    function solve!(
+        problem::QuboProblem{T,TW,Tc},
+        solver::GCS_solver;
+        rng::AbstractRNG = Random.GLOBAL_RNG,
+        initial_conf::Union{ParamType{T},Nothing} = nothing,
+        iterations::Int = 1000,
+        inner_iterations::Int = 1,
+        tf::T = one(T),
+        rounding::Union{RoundingMethod,Tuple{Vararg{RoundingMethod}}} = SignRounding(),
+        save_params::Bool = false,
+        save_energy::Bool = false,
+        opt::Optimisers.AbstractRule = Adam(0.05),
+        progressbar::Bool = true,
+    )
+
+Solve the QUBO problem using the Variational GCS method [fioroniEntanglementassisted2025](@cite).
+
+!!! tip 
+    For more information on the GCS algorithm, see
+    [https://arxiv.org/abs/2501.09078](https://arxiv.org/abs/2501.09078).
+
+!!! warning
+    To use this solver, you need to explicitely import the `GCS` module in your code:
+    ```julia
+    using QuboSolver.Solvers.GCS
+    ```
+
+# Arguments
+- `problem`: [`QuboProblem`](@ref QuboSolver.QuboProblem) object.
+- `solver`: [`GCS_solver`](@ref QuboSolver.Solvers.GCS.GCS_solver) object.
+- `rng`: random number generator (default: `Random.GLOBAL_RNG`).
+- `initial_conf`: initial parameter configuration (default: `nothing` for random initialization).
+- `iterations`: number of time steps (default: `1000`).
+- `inner_iterations`: number of gradient descent steps each time step (default: `1`).
+- `tf`: transverse field strength (default: `1.0`).
+- `rounding`: Rounding method used to obtain the classical configuration from the GCS
+    state (default: [`SignRounding`](@ref QuboSolver.Solvers.GCS.SignRounding)). Accepts both a single method or a tuple of methods.
+- `save_params`: whether to store the final parameters of the GCS state (default: `false`).
+- `save_energy`: whether to store the variational energy during the optimization (default: `false`).
+- `opt`: optimizer for the gradient descent (default: `Adam(0.05)`).
+- `progressbar`: whether to show a progress bar (default: `true`).
+
+# Returns
+The optimal solution found by the solver. Metadata include the runtime as `runtime`, the final 
+parameters of the GCS state as `params` (if `save_params` is `true`), and the variational energy 
+during the optimization as `energy` (if `save_energy` is `true`).
+
+# Example
+```jldoctest; setup = :(using Random; Random.seed!(11))
+using QuboSolver.Solvers.GCS
+
+problem = QuboProblem([0.0 1.0; 1.0 0.0], [1.0, 0.0])
+solution = solve!(problem, GCS_solver(); save_params=true, save_energy=true, progressbar=false)
+
+# output
+
+🟦🟦 - Energy: -3.0 - Solver: GCS_solver - Metadata count: 3
+```
 """
 function QuboSolver.solve!(
     problem::QuboProblem{T,TW,Tc},
