@@ -58,7 +58,7 @@ end
     end
 end
 
-@testitem "variational gcs solver > prod and cound nonzeros" begin
+@testitem "variational gcs solver > prod and count nonzeros" begin
     using QuboSolver.Solvers.GCS
 
     arr = collect(Float64, 1:10)

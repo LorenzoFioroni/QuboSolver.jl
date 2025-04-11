@@ -16,7 +16,7 @@ Use the TAMC library [bauzaScalingAdvantageApproximate2024](@cite) to solve the 
     See the [https://github.com/USCqserver/tamc](https://github.com/USCqserver/tamc) for more information.
 
 !!! warning
-    To use this solver, you need to explicitely import the `PTICM` module in your code:
+    To use this solver, you need to explicitly import the `PTICM` module in your code:
     ```julia
     using QuboSolver.Solvers.PTICM
     ```
@@ -130,7 +130,7 @@ Solve the QuboProblem `problem` using the TAMC solver [bauzaScalingAdvantageAppr
     See the [https://github.com/USCqserver/tamc](https://github.com/USCqserver/tamc) for more information.
 
 !!! warning
-    To use this solver, you need to explicitely import the `PTICM` module in your code:
+    To use this solver, you need to explicitly import the `PTICM` module in your code:
     ```julia
     using QuboSolver.Solvers.PTICM
     ```

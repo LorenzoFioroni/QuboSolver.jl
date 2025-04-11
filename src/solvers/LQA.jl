@@ -26,7 +26,7 @@ The variational states in LQA are thus product states.
     [https://doi.org/10.1103/PhysRevApplied.18.034016](https://doi.org/10.1103/PhysRevApplied.18.034016).
 
 !!! warning
-    To use this solver, you need to explicitely import the `LQA` module in your code:
+    To use this solver, you need to explicitly import the `LQA` module in your code:
     ```julia
     using QuboSolver.Solvers.LQA
     ```
@@ -273,7 +273,7 @@ Solve the QUBO problem using the Local Quantum Annealing solver [bowlesQuadratic
     [https://doi.org/10.1103/PhysRevApplied.18.034016](https://doi.org/10.1103/PhysRevApplied.18.034016).
 
 !!! warning
-    To use this solver, you need to explicitely import the `LQA` module in your code:
+    To use this solver, you need to explicitly import the `LQA` module in your code:
     ```julia
     using QuboSolver.Solvers.LQA
     ```

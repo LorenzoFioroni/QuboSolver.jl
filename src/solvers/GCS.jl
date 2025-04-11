@@ -40,7 +40,7 @@ applying an additional rotation operator to each qubit.
     [https://arxiv.org/abs/2501.09078](https://arxiv.org/abs/2501.09078).
 
 !!! warning
-    To use this solver, you need to explicitely import the `GCS` module in your code:
+    To use this solver, you need to explicitly import the `GCS` module in your code:
     ```julia
     using QuboSolver.Solvers.GCS
     ```
@@ -2398,7 +2398,7 @@ Solve the QUBO problem using the Variational GCS method [fioroniEntanglementassi
     [https://arxiv.org/abs/2501.09078](https://arxiv.org/abs/2501.09078).
 
 !!! warning
-    To use this solver, you need to explicitely import the `GCS` module in your code:
+    To use this solver, you need to explicitly import the `GCS` module in your code:
     ```julia
     using QuboSolver.Solvers.GCS
     ```

@@ -13,7 +13,7 @@ Exhaustively search through all possible configurations to find the optimal solu
 recommended for large problems due to its exponential time and memory complexity. 
 
 !!! warning
-    To use this solver, you need to explicitely import the `BruteForce` module in your code:
+    To use this solver, you need to explicitly import the `BruteForce` module in your code:
     ```julia
     using QuboSolver.Solvers.BruteForce
     ```
@@ -47,7 +47,7 @@ recommended for large problems due to its exponential time and memory complexity
 uses all available threads to parallelize the search.
 
 !!! warning
-    To use this solver, you need to explicitely import the `BruteForce` module in your code:
+    To use this solver, you need to explicitly import the `BruteForce` module in your code:
     ```julia
     using QuboSolver.Solvers.BruteForce
     ```
