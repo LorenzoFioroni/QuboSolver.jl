@@ -178,14 +178,14 @@ The GCS solver is able to find a solution that is within much closer to the opti
 
 ::: tip
 
-For a systematic study of the performance of the GCS solver and its comparison with the other implmented solvers, please refer to the article "[Entanglement-assisted heuristic for variational solutions of discrete optimization problems](https://arxiv.org/abs/2501.09078)". 
+For a systematic study of the performance of the GCS solver and its comparison with the other implemented solvers, please refer to the article "[Entanglement-assisted heuristic for variational solutions of discrete optimization problems](https://arxiv.org/abs/2501.09078)". 
 Both result quality and runtime are discussed in detail there.
 
 :::
 
 ## Solvers
 
-Finally, we want to provide a brief overview of the available solvers implmented in the package. For more information on each one of them, please refer to the [API documentation](resources/api.md).
+Finally, we want to provide a brief overview of the available solvers implemented in the package. For more information on each one of them, please refer to the [API documentation](resources/api.md).
 
 ::: warning A note on execution times
 

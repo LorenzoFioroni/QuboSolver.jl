@@ -1,6 +1,6 @@
 # Citing
 
-If you use the GCS algorithm, plase consider citing the original paper "[Entanglement-assisted heuristic for variational solutions of discrete optimization problems](https://arxiv.org/abs/2501.09078)".
+If you use the GCS algorithm, please consider citing the original paper "[Entanglement-assisted heuristic for variational solutions of discrete optimization problems](https://arxiv.org/abs/2501.09078)".
 
 You can use the following BibTeX entry:
 
