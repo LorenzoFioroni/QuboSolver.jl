@@ -1,12 +1,64 @@
 export EdwardsAnderson, SherringtonKirkpatrick, Chimera
 
+@doc raw"""
+    abstract type QuboProblemClass end
 
+Abstract type representing a class of QUBO problems.
+"""
 abstract type QuboProblemClass end
 
+@doc raw"""
+    struct SherringtonKirkpatrick <: QuboProblemClass end
+
+An instance of `QuboProblemClass` representing the Sherrington-Kirkpatrick model.
+"""
 struct SherringtonKirkpatrick <: QuboProblemClass end
+
+@doc raw"""
+    struct EdwardsAnderson <: QuboProblemClass end
+
+An instance of `QuboProblemClass` representing the Edwards-Anderson model.
+"""
 struct EdwardsAnderson <: QuboProblemClass end
+
+@doc raw"""
+    struct Chimera <: QuboProblemClass end
+
+An instance of `QuboProblemClass` representing the Chimera model.
+"""
 struct Chimera <: QuboProblemClass end
 
+@doc raw"""
+    function rand(
+        ::SherringtonKirkpatrick, 
+        N::Int; 
+        rng::AbstractRNG = Random.GLOBAL_RNG,
+        eltype::Type = Float64
+    )
+
+Generate a random QUBO matrix for the Sherrington-Kirkpatrick model.
+
+# Arguments
+
+  - `N::Int`: Number of variables.
+  - `rng::AbstractRNG`: Random number generator (default: `Random.GLOBAL_RNG`).
+  - `eltype::Type`: Element type of the matrix elements (default: `Float64`).
+
+# Example
+
+```jldoctest
+W = rand(SherringtonKirkpatrick(), 4)
+println(size(W))
+println(all(diag(W) .== 0))
+println(W == transpose(W))
+
+# output
+
+(4, 4)
+true
+true
+```
+"""
 function Base.rand(
     ::SherringtonKirkpatrick,
     N::Int;
@@ -19,6 +71,41 @@ function Base.rand(
     return W
 end
 
+@doc raw"""
+    function rand(
+        ::EdwardsAnderson, 
+        N_side::Int; 
+        rng::AbstractRNG = Random.GLOBAL_RNG,
+        sparse::Bool = false,
+        eltype::Type = Float64
+    )
+
+Generate a random QUBO matrix for the 3D Edwards-Anderson model with open boundary conditions.
+
+# Arguments
+
+  - `N_side::Int`: Side length of the cubic lattice.
+  - `rng::AbstractRNG`: Random number generator (default: `Random.GLOBAL_RNG`).
+  - `sparse::Bool`: If true, generate a sparse matrix (default: `false`).
+  - `eltype::Type`: Element type of the matrix elements (default: `Float64`).
+
+# Example
+
+```jldoctest
+W = rand(EdwardsAnderson(), 4; sparse = true) # 4x4x4 lattice
+println(size(W))
+println(typeof(W))
+println(all(diag(W) .== 0))
+println(W == transpose(W))
+
+# output
+
+(64, 64)
+SparseMatrixCSC{Float64, Int64}
+true
+true
+```
+"""
 function Base.rand(
     ::EdwardsAnderson,
     N_side::Int;
@@ -46,6 +133,45 @@ function Base.rand(
     return W
 end
 
+@doc raw"""
+    function rand(
+        ::Chimera, 
+        N_rows::Int, 
+        N_cols::Int, 
+        N_spin_layer::Int = 4; 
+        rng::AbstractRNG = Random.GLOBAL_RNG,
+        sparse::Bool = false,
+        eltype::Type = Float64
+    )
+
+Generate a random QUBO matrix for the Chimera model.
+
+# Arguments
+
+  - `N_rows::Int`: Number of rows in the Chimera lattice.
+  - `N_cols::Int`: Number of columns in the Chimera lattice.
+  - `N_spin_layer::Int`: Number of spins per unit cell (default: 4).
+  - `rng::AbstractRNG`: Random number generator (default: `Random.GLOBAL_RNG`).
+  - `sparse::Bool`: If true, generate a sparse matrix (default: `false`).
+  - `eltype::Type`: Element type of the matrix elements (default: `Float64`).
+
+# Example
+
+```jldoctest
+W = rand(Chimera(), 4, 4, 4; sparse = true) # 4x4x(4x2) lattice
+println(size(W))
+println(typeof(W))
+println(all(diag(W) .== 0))
+println(W == transpose(W))
+
+# output
+
+(128, 128)
+SparseMatrixCSC{Float64, Int64}
+true
+true
+```
+"""
 function Base.rand(
     ::Chimera,
     N_rows::Int,
