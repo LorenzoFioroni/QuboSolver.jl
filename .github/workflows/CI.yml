@@ -1,0 +1,72 @@
+name: Runtests
+
+on:
+  push:
+    branches:
+      - 'main'
+    paths:
+      - '.github/workflows/CI.yml'
+      - 'src/**'
+      - 'test/runtests.jl'
+      - 'test/core-test/**'
+      - 'Project.toml'
+  pull_request:
+    branches:
+      - 'main'
+    paths:
+      - '.github/workflows/CI.yml'
+      - 'src/**'
+      - 'test/runtests.jl'
+      - 'test/core-test/**'
+      - 'Project.toml'
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - ready_for_review
+
+jobs:
+  test:
+    name: Julia ${{ matrix.version }} - ${{ matrix.node.os }} - ${{ matrix.node.arch }} ( ${{ matrix.group }} )
+    runs-on: ${{ matrix.node.os }}
+    permissions: # needed to allow julia-actions/cache to delete old caches that it has created
+      actions: write
+      contents: read
+    if: ${{ !github.event.pull_request.draft }}
+    strategy:
+      fail-fast: false
+      matrix:
+        # for core tests (latest and oldest supported versions)
+        version:
+          - '1.8' # oldest
+          - '1'    # latest
+        node:
+          - os: 'ubuntu-latest'
+            arch: 'x64'
+          - os: 'windows-latest'
+            arch: 'x64'
+          - os: 'macOS-latest'
+            arch: 'arm64'
+        group:
+          - 'Core'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: julia-actions/setup-julia@v2
+        with:
+          version: ${{ matrix.version }}
+          arch: ${{ matrix.node.arch }}
+      - uses: julia-actions/cache@v2
+      - uses: julia-actions/julia-buildpkg@v1
+      - uses: julia-actions/julia-runtest@v1
+        env:
+          GROUP: ${{ matrix.group }}
+          JULIA_NUM_THREADS: auto
+      - uses: julia-actions/julia-processcoverage@v1
+        with:
+          directories: src,ext
+      - uses: codecov/codecov-action@v5
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        with:
+          files: lcov.info
+          fail_ci_if_error: false
