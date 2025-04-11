@@ -4,6 +4,23 @@ using ..QuboSolver
 
 export PTICM_solver, solve!
 
+@doc raw"""
+    struct PTICM_solver <: AbstractSolver end
+
+Tempering and Annealing Monte Carlo solver for QUBO problems.
+
+Use the TAMC library [bauzaScalingAdvantageApproximate2024](@cite) to solve the QUBO problem.
+
+!!! warning 
+    The TAMC solver requires the TAMC binaries to be installed.
+    See the [https://github.com/USCqserver/tamc](https://github.com/USCqserver/tamc) for more information.
+
+!!! warning
+    To use this solver, you need to explicitely import the `PTICM` module in your code:
+    ```julia
+    using QuboSolver.Solvers.PTICM
+    ```
+"""
 struct PTICM_solver <: AbstractSolver end
 
 function write_method_file(
@@ -93,6 +110,60 @@ function parse_solution_file(problem, output_file::String)
 
     return runtime, min_state
 end
+
+@doc raw"""
+    function solve!(
+        problem::QuboProblem{T,TW,Tc},
+        solver::PTICM_solver;
+        MCS::Integer = 1000,
+        warmup_fraction::Real = 0.5,
+        betas::Vector{T} = T.(QuboSolver.LogRange(0.1, 5.0, 32)),
+        lo_num_beta::Integer = 8,
+        threads::Integer = Threads.nthreads(),
+        num_replica_chains::Integer = 2,
+    ) where {T<:AbstractFloat,TW<:AbstractMatrix{T},Tc<:Union{Nothing,AbstractVector{T}}}
+
+Solve the QuboProblem `problem` using the TAMC solver [bauzaScalingAdvantageApproximate2024](@cite).
+
+!!! warning 
+    The TAMC solver requires the TAMC binaries to be installed.
+    See the [https://github.com/USCqserver/tamc](https://github.com/USCqserver/tamc) for more information.
+
+!!! warning
+    To use this solver, you need to explicitely import the `PTICM` module in your code:
+    ```julia
+    using QuboSolver.Solvers.PTICM
+    ```
+
+## Arguments
+- `problem::QuboProblem`: The QUBO problem to be solved.
+- `solver::PTICM_solver`: Instance of [`PTICM_solver`](@ref QuboSolver.Solvers.PTICM.PTICM_solver).
+- `MCS::Integer`: The number of Monte Carlo steps. The default value is `1000`.
+- `warmup_fraction::Real`: The fraction of Monte Carlo steps to be used for warmup. The default value is 
+    `0.5`.
+- `betas::Vector{T}`: The inverse temperatures to be used. The default value is a logarithmic range
+    between `0.1` and `5.0` with `32` elements.
+- `lo_num_beta::Integer`: The number of inverse temperatures to be used for the isoenergetic cluster
+    moves. The default value is `8`.
+- `threads::Integer`: The number of threads to be used. The default value is the number of available
+    threads.
+- `num_replica_chains::Integer`: The number of replica chains to be used. The default value is `2`.
+
+## Returns
+The optimal solution found by the solver. Metadata include the runtime as `runtime`.
+
+## Example
+```jldoctest
+using QuboSolver.Solvers.PTICM
+
+problem = QuboProblem([0.0 1.0; 1.0 0.0], [1.0, 0.0])
+solution = solve!(problem, PTICM_solver())
+
+# output
+
+🟦🟦 - Energy: -3.0 - Solver: PTICM_solver - Metadata count: 1
+```
+"""
 function QuboSolver.solve!(
     problem::QuboProblem{T,TW,Tc},
     solver::PTICM_solver;
