@@ -6,10 +6,66 @@ using ProgressMeter
 
 export SA_solver, solve!
 
+@doc raw"""
+    struct SA_solver <: AbstractSolver end
+
+Simulated Annealing solver for QUBO problems [kirkpatrickOptimizationSimulatedAnnealing1983](@cite).
+
+!!! warning
+    To use this solver, you need to explicitely import the `SA` module in your code:
+    ```julia
+    using QuboSolver.Solvers.SA
+    ```
+"""
 struct SA_solver <: AbstractSolver end
 
 schedule(it::Integer, N_it::Integer) = 1 - (it - 1) / (N_it - 1)
 
+@doc raw"""
+    function solve!(
+        problem::QuboProblem,
+        solver::SA_solver;
+        MCS::Integer = 1000,
+        rng::Random.AbstractRNG = Random.GLOBAL_RNG,
+        initial_conf::Union{AbstractVector{Int8},Nothing} = nothing,
+        initial_temp::Real = 1.0,
+        progressbar::Bool = true,
+    )
+
+Solve the QuboProblem `problem` using simulated annealing [kirkpatrickOptimizationSimulatedAnnealing1983](@cite) with a linearly decreasing temperature 
+schedule. 
+
+!!! warning
+    To use this solver, you need to explicitely import the `SA` module in your code:
+    ```julia
+    using QuboSolver.Solvers.SA
+    ```
+
+## Arguments
+- `problem::QuboProblem`: [`QuboProblem`](@ref QuboSolver.QuboProblem) instance to be solved.
+- `solver::SA_solver`: Instance of [`SA_solver`](@ref QuboSolver.Solvers.SA.SA_solver).
+- `MCS::Integer`: Number of Monte Carlo steps. The default value is `1000`.
+- `rng::Random.AbstractRNG`: Random number generator. The default value is `Random.GLOBAL_RNG`.
+- `initial_conf::Union{AbstractVector{Int8},Nothing}`: Initial configuration. If `nothing`, a random 
+    configuration is generated. The default value is `nothing`.
+- `initial_temp::Real`: Initial temperature. The default value is `1.0`.
+- `progressbar::Bool`: Whether to show a progress bar. The default value is `true`.
+
+## Returns
+The optimal solution found by the solver. Metadata include the runtime as `runtime`.
+
+## Example
+```jldoctest
+using QuboSolver.Solvers.SA
+
+problem = QuboProblem([0.0 1.0; 1.0 0.0], [1.0, 0.0])
+solution = solve!(problem, SA_solver())
+
+# output
+
+🟦🟦 - Energy: -3.0 - Solver: SA_solver - Metadata count: 1
+```
+"""
 function QuboSolver.solve!(
     problem::QuboProblem,
     solver::SA_solver;
