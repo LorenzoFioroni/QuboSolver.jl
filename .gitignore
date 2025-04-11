@@ -1,9 +1,10 @@
+.DS_Store
+
 *.jl.*.cov
 *.jl.cov
 *.jl.mem
-/docs/build/
-/docs/site/
-/docs/Manifest.toml
-/test/Manifest.toml
-/Manifest.toml
 
+.vscode
+
+samples.bin
+Manifest.toml
