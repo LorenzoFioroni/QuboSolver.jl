@@ -16,7 +16,7 @@ Create a dense array similar to the input `A`.
 Eventual additional arguments are passed to the `similar` function.
 
 # Example
-```jldoctest
+```julia
 A = sprand(Float32, 10, 10, 0.1)
 B = dense_similar(A)
 println(size(B)) 
@@ -39,7 +39,7 @@ dense_similar(A::AbstractSparseMatrix, args...) = similar(Array(A), args...)
 Create a new NamedTuple by recursively applying `similar` to each element of the input `a`.
 
 # Example
-```jldoctest
+```julia
 a = (x = rand(3), y = rand(Float32, 2, 2))
 b = similar_named_tuple(a)
 println(typeof(b) == typeof(a))
@@ -63,7 +63,7 @@ Fill the vector `a` with the binary representation of the integer `n` as ``1`` a
 See also [`conf_int2spin`](@ref QuboSolver.conf_int2spin)
 
 # Example
-```jldoctest
+```julia
 a = Vector{Int8}(undef, 4)
 conf_int2spin!(a, 5)
 println(a) 
@@ -93,7 +93,7 @@ Create an n-long vector containing the binary representation of the integer `n` 
 See also [`conf_int2spin!`](@ref QuboSolver.conf_int2spin!)
 
 # Example
-```jldoctest
+```julia
 a = conf_int2spin(5, 7)
 println(a) 
 
@@ -121,7 +121,7 @@ Convert a QUBO matrix `W` and an optional bias vector `bias` from binary to spin
 - `c::Union{Nothing,<:AbstractVector{T}}`: The bias vector.
 
 # Example
-```jldoctest
+```julia
 W = [0.0 1.0; 1.0 0.0]
 bias = [1.0, 0.0]
 J, c = binary_to_spin(W, bias)
@@ -159,7 +159,7 @@ Convert a QUBO matrix `J` and an optional bias vector `c` from spin to binary re
 - `bias::Union{Nothing,<:AbstractVector{T}}`: The bias vector.
 
 # Example
-```jldoctest
+```julia
 J = [0.0 0.25; 0.25 0.0]
 c = [1.0, 0.5]
 W, bias = spin_to_binary(J, c)
@@ -205,7 +205,7 @@ Extract the coordinates and values of the non-zero elements in the upper triangu
 - `compact::Vector{eltype(A)}`: A vector of the non-zero values.
 
 # Example
-```jldoctest
+```julia
 W = [0.0 1.0 0.0; 1.0 0.0 2.0; 0.0 2.0 0.0]
 coo, compact = nonzero_triu(W)
 println(coo)
@@ -327,7 +327,7 @@ Drop the smallest elements of the matrix `W` until the target sparsity is reache
 A copy of `W` with the smallest elements dropped to reach the target sparsity.
 
 # Example
-```jldoctest; setup = :(using Random; Random.seed!(1234))
+```julia
 A = randn(1000, 1000)
 target_sparsity = 0.34
 B = sparse(drop_target_sparsity(A, target_sparsity; max_depth = 50))

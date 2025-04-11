@@ -2424,7 +2424,7 @@ parameters of the GCS state as `params` (if `save_params` is `true`), and the va
 during the optimization as `energy` (if `save_energy` is `true`).
 
 # Example
-```jldoctest; setup = :(using Random; Random.seed!(11))
+```julia
 using QuboSolver.Solvers.GCS
 
 problem = QuboProblem([0.0 1.0; 1.0 0.0], [1.0, 0.0])

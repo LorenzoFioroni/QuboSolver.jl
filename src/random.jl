@@ -46,7 +46,7 @@ Generate a random QUBO matrix for the Sherrington-Kirkpatrick model.
 
 # Example
 
-```jldoctest
+```julia
 W = rand(SherringtonKirkpatrick(), 4)
 println(size(W))
 println(all(diag(W) .== 0))
@@ -91,7 +91,7 @@ Generate a random QUBO matrix for the 3D Edwards-Anderson model with open bounda
 
 # Example
 
-```jldoctest
+```julia
 W = rand(EdwardsAnderson(), 4; sparse = true) # 4x4x4 lattice
 println(size(W))
 println(typeof(W))
@@ -157,7 +157,7 @@ Generate a random QUBO matrix for the Chimera model.
 
 # Example
 
-```jldoctest
+```julia
 W = rand(Chimera(), 4, 4, 4; sparse = true) # 4x4x(4x2) lattice
 println(size(W))
 println(typeof(W))

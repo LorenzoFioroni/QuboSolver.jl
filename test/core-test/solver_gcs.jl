@@ -1565,4 +1565,3 @@ end
     @test isapprox(runtime2, 2 * runtime, rtol = 0.3)
     @test isapprox(runtime3, 2 * runtime, rtol = 0.3)
 end
-

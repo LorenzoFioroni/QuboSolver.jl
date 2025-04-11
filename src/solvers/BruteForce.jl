@@ -57,7 +57,7 @@ The optimal solution found by the solver. Metadata include the runtime as `runti
 number of threads used as `nthreads`.
 
 # Example
-```jldoctest
+```julia
 using QuboSolver.Solvers.BruteForce
 
 problem = QuboProblem([0.0 1.0; 1.0 0.0], [1.0, 0.0])

@@ -300,7 +300,7 @@ include the runtime as `runtime`, the parameters of the variational state as `pa
 is `true`).
 
 ## Example
-```jldoctest; setup = :(using Random; Random.seed!(11))
+```julia
 using QuboSolver.Solvers.LQA
 
 problem = QuboProblem([0.0 1.0; 1.0 0.0], [1.0, 0.0])

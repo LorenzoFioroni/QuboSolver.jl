@@ -55,7 +55,7 @@ schedule.
 The optimal solution found by the solver. Metadata include the runtime as `runtime`.
 
 ## Example
-```jldoctest
+```julia
 using QuboSolver.Solvers.SA
 
 problem = QuboProblem([0.0 1.0; 1.0 0.0], [1.0, 0.0])

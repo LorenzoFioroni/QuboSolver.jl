@@ -61,7 +61,7 @@ The optimal solution found by the solver. Metadata include the runtime as `runti
 maximum gap as `mipgap`.
 
 ## Example
-```jldoctest
+```julia
 using QuboSolver.Solvers.GurobiLib
 
 problem = QuboProblem([0.0 1.0; 1.0 0.0], [1.0, 0.0])

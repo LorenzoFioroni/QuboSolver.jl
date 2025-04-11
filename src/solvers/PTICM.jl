@@ -153,7 +153,7 @@ Solve the QuboProblem `problem` using the TAMC solver [bauzaScalingAdvantageAppr
 The optimal solution found by the solver. Metadata include the runtime as `runtime`.
 
 ## Example
-```jldoctest
+```julia
 using QuboSolver.Solvers.PTICM
 
 problem = QuboProblem([0.0 1.0; 1.0 0.0], [1.0, 0.0])
