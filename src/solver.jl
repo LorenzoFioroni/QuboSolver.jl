@@ -3,4 +3,6 @@ export AbstractSolver
 
 abstract type AbstractSolver end
 
-Base.show(io::IO, solver::AbstractSolver) = print(io, "Solver: ", Base.typename(typeof(solver)).wrapper)
+function Base.show(io::IO, solver::AbstractSolver)
+    return print(io, "Solver: ", Base.typename(typeof(solver)).name)
+end
