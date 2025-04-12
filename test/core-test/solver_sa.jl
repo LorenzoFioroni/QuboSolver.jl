@@ -44,12 +44,12 @@
     sol = solve!(
         problem,
         solver;
-        MCS = 2,
+        MCS = 100_000,
         rng = rng,
         initial_conf = initial_conf,
         progressbar = false,
     )
-    @test sol.configuration == [-1, 1, -1, 1, -1] # valid with this initial conf
+    @test sol.configuration == [1, -1, 1, -1, 1] .* (-1)^(idx - 1) 
 
     # Test progress bar suppression
     N = 5
