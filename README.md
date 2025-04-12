@@ -13,8 +13,8 @@
 [codecov-img]: https://codecov.io/gh/LorenzoFioroni/QuboSolver.jl/branch/main/graph/badge.svg
 [codecov-url]: https://codecov.io/gh/LorenzoFioroni/QuboSolver.jl
 
-[code-quality-img]: https://github.com/LorenzoFioroni/QuboSolver.jl/actions/workflows/Code-Quality.yml/badge.svg 
-[code-quality-url]: https://github.com/LorenzoFioroni/QuboSolver.jl/actions/workflows/Code-Quality.yml
+[code-quality-img]: https://github.com/LorenzoFioroni/QuboSolver.jl/actions/workflows/CodeQuality.yml/badge.svg 
+[code-quality-url]: https://github.com/LorenzoFioroni/QuboSolver.jl/actions/workflows/CodeQuality.yml
 
 [aqua-img]: https://raw.githubusercontent.com/JuliaTesting/Aqua.jl/master/badge.svg
 [aqua-url]: https://github.com/JuliaTesting/Aqua.jl
