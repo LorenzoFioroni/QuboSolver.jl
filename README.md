@@ -1,11 +1,13 @@
 # QuboSolver.jl
 
-| **Article**       | ![Static Badge](https://img.shields.io/badge/DOI-10.48550%2FarXiv.2501.09078-blue?style=flat&logo=arXiv&link=https%3A%2F%2Fdoi.org%2F10.48550%2FarXiv.2501.09078) |
+| **Article**       | [![DOI][article-img]][article-url] |
 |:-----------------:|:-------------|
 | **Runtests**      | [![Runtests][runtests-img]][runtests-url] [![Coverage][codecov-img]][codecov-url] |
 | **Code Quality**  | [![Code Quality][code-quality-img]][code-quality-url] [![Aqua QA][aqua-img]][aqua-url] [![JET][jet-img]][jet-url] |
 | **Documentation** | [![Doc-Stable][docs-stable-img]][docs-stable-url] |
 
+[article-img]: https://img.shields.io/badge/DOI-10.48550%2FarXiv.2501.09078-blue?style=flat&logo=arXiv&link=https%3A%2F%2Fdoi.org%2F10.48550%2FarXiv.2501.09078
+[article-url]: https://doi.org/10.48550/arXiv.2501.09078
 
 [runtests-img]: https://github.com/LorenzoFioroni/QuboSolver.jl/actions/workflows/CI.yml/badge.svg?branch=main
 [runtests-url]: https://github.com/LorenzoFioroni/QuboSolver.jl/actions/workflows/CI.yml?query=branch%3Amain
@@ -45,8 +47,8 @@
 
 ## Installation
     
-!!! note "Requirements"
-    `QuboSolver.jl` requires `Julia 1.10+`.
+> [!NOTE]
+> `QuboSolver.jl` requires `Julia 1.10+`.
 
 To install `QuboSolver.jl`, run the following commands inside Julia's interactive session (REPL):
 ```julia
@@ -65,3 +67,18 @@ using QuboSolver
 The package is now ready to be used. You can start by checking the [Getting Started](https://lorenzofioroni.github.io/QuboSolver.jl/dev/getting_started) page from the documentation for a quick introduction to the package and its features.
 You can also check the [API documentation](https://lorenzofioroni.github.io/QuboSolver.jl/dev/resources/api) for a more detailed overview of the available functions and their usage.
 
+## Citing
+
+
+If you use the GCS algorithm, please consider citing the original paper "[Entanglement-assisted heuristic for variational solutions of discrete optimization problems](https://arxiv.org/abs/2501.09078)".
+
+You can use the following BibTeX entry:
+
+```bibtex
+@article{fioroni2025entanglement,
+  title={Entanglement-assisted variational algorithm for discrete optimization problems},
+  author={Fioroni, Lorenzo and Savona, Vincenzo},
+  journal={arXiv preprint arXiv:2501.09078},
+  year={2025}
+}
+```
