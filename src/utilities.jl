@@ -79,7 +79,7 @@ function conf_int2spin!(a::AbstractVector{<:Integer}, n::Integer)
     n < 0 && throw(ArgumentError("n must be non-negative"))
     log2(n) < pad || throw(ArgumentError("n must be less than 2^pad"))
 
-    i = typeof(a)(0:pad-1)
+    i = typeof(a)(0:(pad-1))
     a .= ifelse.((n .>> i) .& 1 .== 1, 1, -1)
 
     return a
@@ -224,7 +224,7 @@ function nonzero_triu(A::Matrix; skip_zeros = true)
 
     count = 1
     for col ∈ 1:n
-        for row ∈ 1:col-1
+        for row ∈ 1:(col-1)
             val = A[row, col]
             val == 0 && skip_zeros && continue
             coo[count] = (row, col)
@@ -233,8 +233,8 @@ function nonzero_triu(A::Matrix; skip_zeros = true)
         end
     end
 
-    coo = coo[1:count-1]
-    compact = compact[1:count-1]
+    coo = coo[1:(count-1)]
+    compact = compact[1:(count-1)]
 
     return coo, compact
 end

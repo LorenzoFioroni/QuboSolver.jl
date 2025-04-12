@@ -5,7 +5,7 @@
 
     # Test without bias term
     N = 5
-    W = (-1) .^ ((0:N-1)' .+ (0:N-1)) .* rand(N, N)
+    W = (-1) .^ ((0:(N-1))' .+ (0:(N-1))) .* rand(N, N)
     W = triu(W, 1) + triu(W, 1)'
     problem = QuboProblem(W)
     solver = BruteForce_solver()
@@ -22,7 +22,7 @@
 
     # Test with bias term
     N = 5
-    W = (-1) .^ ((0:N-1)' .+ (0:N-1)) .* rand(N, N)
+    W = (-1) .^ ((0:(N-1))' .+ (0:(N-1))) .* rand(N, N)
     W = triu(W, 1) + triu(W, 1)'
     bias = zeros(N)
     idx = rand(1:N)

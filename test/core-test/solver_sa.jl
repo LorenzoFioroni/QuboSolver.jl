@@ -13,7 +13,7 @@
 
     # Test result
     N = 5
-    W = (-1) .^ ((0:N-1)' .+ (0:N-1)) .* rand(N, N)
+    W = (-1) .^ ((0:(N-1))' .+ (0:(N-1))) .* rand(N, N)
     W = triu(W, 1) + triu(W, 1)'
     bias = zeros(N)
     idx = rand(1:N)
@@ -32,7 +32,7 @@
 
     # Test initial configuration
     N = 5
-    W = (-1) .^ ((0:N-1)' .+ (0:N-1)) .* rand(N, N)
+    W = (-1) .^ ((0:(N-1))' .+ (0:(N-1))) .* rand(N, N)
     W = triu(W, 1) + triu(W, 1)'
     bias = zeros(N)
     idx = rand(1:N)
@@ -53,7 +53,7 @@
 
     # Test progress bar suppression
     N = 5
-    W = (-1) .^ ((0:N-1)' .+ (0:N-1)) .* rand(N, N)
+    W = (-1) .^ ((0:(N-1))' .+ (0:(N-1))) .* rand(N, N)
     W = triu(W, 1) + triu(W, 1)'
     problem = QuboProblem(W)
     rng = StableRNG(1234)
@@ -65,7 +65,7 @@
 
     # Test progress bar 
     N = 5
-    W = (-1) .^ ((0:N-1)' .+ (0:N-1)) .* rand(N, N)
+    W = (-1) .^ ((0:(N-1))' .+ (0:(N-1))) .* rand(N, N)
     W = triu(W, 1) + triu(W, 1)'
     problem = QuboProblem(W)
     rng = StableRNG(1234)
@@ -76,7 +76,7 @@
 
     # Test MCS bounds
     N = 5
-    W = (-1) .^ ((0:N-1)' .+ (0:N-1)) .* rand(N, N)
+    W = (-1) .^ ((0:(N-1))' .+ (0:(N-1))) .* rand(N, N)
     W = triu(W, 1) + triu(W, 1)'
     problem = QuboProblem(W)
     rng = StableRNG(1234)

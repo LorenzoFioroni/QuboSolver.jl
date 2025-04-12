@@ -189,26 +189,26 @@ function Base.rand(
     decouple_idxs = diagind(N_rows - 1, N_rows - 1)
 
     for idx ∈ 1:2N_spin_layer:N_spins
-        @views W[idx:idx+N_spin_layer-1, idx+N_spin_layer:idx+2N_spin_layer-1] .=
+        @views W[idx:(idx+N_spin_layer-1), (idx+N_spin_layer):(idx+2N_spin_layer-1)] .=
             randn(rng, N_spin_layer, N_spin_layer)
     end
 
     if N_rows > 1
-        for offset ∈ 0:N_spin_layer-1
-            @views W[1+offset:2N_spin_layer:N_spins, 1+offset:2N_spin_layer:N_spins][row_coupling_idxs] .=
+        for offset ∈ 0:(N_spin_layer-1)
+            @views W[(1+offset):2N_spin_layer:N_spins, (1+offset):2N_spin_layer:N_spins][row_coupling_idxs] .=
                 randn(rng, (N_rows - 1) * N_cols)
         end
     end
 
     if N_cols > 1
-        for offset ∈ 0:N_spin_layer-1
+        for offset ∈ 0:(N_spin_layer-1)
             @views W[
-                1+offset+N_spin_layer:2N_spin_layer:N_spins,
-                1+offset+N_spin_layer:2N_spin_layer:N_spins,
+                (1+offset+N_spin_layer):2N_spin_layer:N_spins,
+                (1+offset+N_spin_layer):2N_spin_layer:N_spins,
             ][col_coupling_idxs] .= randn(rng, N_rows * N_cols - 1)
             @views W[
-                offset+2N_spin_layer*N_cols+1-N_spin_layer:2N_spin_layer*N_cols:N_spins-N_spin_layer,
-                offset+2N_spin_layer*N_cols-N_spin_layer+1+2N_spin_layer:2N_spin_layer*N_cols:N_spins-N_spin_layer,
+                (offset+2N_spin_layer*N_cols+1-N_spin_layer):(2N_spin_layer*N_cols):(N_spins-N_spin_layer),
+                (offset+2N_spin_layer*N_cols-N_spin_layer+1+2N_spin_layer):(2N_spin_layer*N_cols):(N_spins-N_spin_layer),
             ][decouple_idxs] .= 0
         end
     end

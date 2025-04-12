@@ -212,7 +212,7 @@ function round_configuration(
     conf = similar(z, Int8)
     conf .= Int8.(sign.(sin.(pi / 2 .* tanh.(z))))
 
-    conf[conf.==0] .= 1
+    conf[conf .== 0] .= 1
     return conf
 end
 
@@ -245,7 +245,7 @@ function round_configuration(
     end
     conf = Int8.(mean_z)
 
-    conf[conf.==0] .= 1
+    conf[conf .== 0] .= 1
 
     return conf
 end
