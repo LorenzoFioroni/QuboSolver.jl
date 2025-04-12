@@ -1,4 +1,4 @@
-@testitem "tamc solver > method file" begin
+@testitem "tamc solver > method file" tags = [:needsthirdparty] begin
     using QuboSolver.Solvers.PTICM
 
     MCS = 350
@@ -34,7 +34,7 @@
     end
 end
 
-@testitem "tamc solver > instance file" begin
+@testitem "tamc solver > instance file" tags = [:needsthirdparty] begin
     using QuboSolver.Solvers.PTICM
 
     N = 5
@@ -60,7 +60,7 @@ end
     end
 end
 
-@testitem "tamc solver > solve" begin
+@testitem "tamc solver > solve" tags = [:needsthirdparty] begin
     using QuboSolver.Solvers.PTICM
     using StableRNGs
     import Suppressor: @capture_err

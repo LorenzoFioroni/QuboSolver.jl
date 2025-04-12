@@ -48,7 +48,7 @@ jobs:
           - os: 'macOS-latest'
             arch: 'arm64'
         group:
-          - 'core'
+          - 'continuous integration'
     steps:
       - uses: actions/checkout@v4
       - uses: julia-actions/setup-julia@v2

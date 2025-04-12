@@ -1,4 +1,4 @@
-@testitem "gurobi solver" begin
+@testitem "gurobi solver" tags = [:needslicense] begin
     using StableRNGs
     import Suppressor: @capture_out
     using QuboSolver.Solvers.GurobiLib
