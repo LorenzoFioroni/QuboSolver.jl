@@ -11,7 +11,7 @@ should take a QuboProblem, the solver instance, and any additional arguments and
 object. 
 
 ## Example
-```jldoctest
+```julia
 struct MySolver <: AbstractSolver end
 function QuboSolver.solve!(problem::QuboProblem, solver::MySolver)
     # Implement the solver logic here

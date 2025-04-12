@@ -38,7 +38,7 @@ jobs:
       matrix:
         # for core tests (latest and oldest supported versions)
         version:
-          - '1.8' # oldest
+          - '1.10' # oldest
           - '1'    # latest
         node:
           - os: 'ubuntu-latest'
@@ -48,7 +48,7 @@ jobs:
           - os: 'macOS-latest'
             arch: 'arm64'
         group:
-          - 'Core'
+          - 'continuous integration'
     steps:
       - uses: actions/checkout@v4
       - uses: julia-actions/setup-julia@v2

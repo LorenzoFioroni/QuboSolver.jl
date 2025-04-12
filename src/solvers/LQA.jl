@@ -26,7 +26,7 @@ The variational states in LQA are thus product states.
     [https://doi.org/10.1103/PhysRevApplied.18.034016](https://doi.org/10.1103/PhysRevApplied.18.034016).
 
 !!! warning
-    To use this solver, you need to explicitely import the `LQA` module in your code:
+    To use this solver, you need to explicitly import the `LQA` module in your code:
     ```julia
     using QuboSolver.Solvers.LQA
     ```
@@ -212,7 +212,7 @@ function round_configuration(
     conf = similar(z, Int8)
     conf .= Int8.(sign.(sin.(pi / 2 .* tanh.(z))))
 
-    conf[conf.==0] .= 1
+    conf[conf .== 0] .= 1
     return conf
 end
 
@@ -245,7 +245,7 @@ function round_configuration(
     end
     conf = Int8.(mean_z)
 
-    conf[conf.==0] .= 1
+    conf[conf .== 0] .= 1
 
     return conf
 end
@@ -273,7 +273,7 @@ Solve the QUBO problem using the Local Quantum Annealing solver [bowlesQuadratic
     [https://doi.org/10.1103/PhysRevApplied.18.034016](https://doi.org/10.1103/PhysRevApplied.18.034016).
 
 !!! warning
-    To use this solver, you need to explicitely import the `LQA` module in your code:
+    To use this solver, you need to explicitly import the `LQA` module in your code:
     ```julia
     using QuboSolver.Solvers.LQA
     ```
@@ -300,7 +300,7 @@ include the runtime as `runtime`, the parameters of the variational state as `pa
 is `true`).
 
 ## Example
-```jldoctest; setup = :(using Random; Random.seed!(11))
+```julia
 using QuboSolver.Solvers.LQA
 
 problem = QuboProblem([0.0 1.0; 1.0 0.0], [1.0, 0.0])

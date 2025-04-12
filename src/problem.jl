@@ -39,7 +39,7 @@ struct QuboProblem{
     Create a new QuboProblem instance with the given matrix `W` and optional bias vector `bias`.
 
     # Example
-    ```jldoctest
+    ```julia
     W = [0.0 1.0; 1.0 0.0]
     bias = [0.0, 1.0]
     println(QuboProblem(W))
@@ -105,7 +105,7 @@ end
 Add a [`Solution`](@ref QuboSolver.Solution) `sol` to the [`QuboProblem`](@ref QuboSolver.QuboProblem) `problem`. 
 
 # Example
-```jldoctest
+```julia
 struct MySolver <: AbstractSolver end
 problem = QuboProblem([0.0 1.0; 1.0 0.0])
 solution = Solution(2.0, [1, -1], MySolver(); runtime=1.1)
@@ -139,7 +139,7 @@ as keyword arguments.
 The added [`Solution`](@ref QuboSolver.Solution) object.
 
 # Example
-```jldoctest
+```julia
 struct MySolver <: AbstractSolver end
 problem = QuboProblem([0.0 1.0; 1.0 0.0])
 

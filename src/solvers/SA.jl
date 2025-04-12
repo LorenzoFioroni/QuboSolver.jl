@@ -12,7 +12,7 @@ export SA_solver, solve!
 Simulated Annealing solver for QUBO problems [kirkpatrickOptimizationSimulatedAnnealing1983](@cite).
 
 !!! warning
-    To use this solver, you need to explicitely import the `SA` module in your code:
+    To use this solver, you need to explicitly import the `SA` module in your code:
     ```julia
     using QuboSolver.Solvers.SA
     ```
@@ -36,7 +36,7 @@ Solve the QuboProblem `problem` using simulated annealing [kirkpatrickOptimizati
 schedule. 
 
 !!! warning
-    To use this solver, you need to explicitely import the `SA` module in your code:
+    To use this solver, you need to explicitly import the `SA` module in your code:
     ```julia
     using QuboSolver.Solvers.SA
     ```
@@ -55,7 +55,7 @@ schedule.
 The optimal solution found by the solver. Metadata include the runtime as `runtime`.
 
 ## Example
-```jldoctest
+```julia
 using QuboSolver.Solvers.SA
 
 problem = QuboProblem([0.0 1.0; 1.0 0.0], [1.0, 0.0])

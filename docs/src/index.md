@@ -29,7 +29,7 @@ hero:
 # [Installation](@id doc:Installation)
 
 !!! note "Requirements"
-    `QuboSolver.jl` requires `Julia 1.8+`.
+    `QuboSolver.jl` requires `Julia 1.10+`.
 
 To install `QuboSolver.jl`, run the following commands inside Julia's interactive session (REPL):
 ```julia
@@ -38,7 +38,7 @@ Pkg.add(url="https://github.com/LorenzoFioroni/QuboSolver.jl")
 ```
 Alternatively, this can also be run in `Julia`'s [Pkg REPL](https://julialang.github.io/Pkg.jl/v1/getting-started/) by pressing the key `]` in the REPL and running:
 ```julia-repl
-(1.8) pkg> add https://github.com/LorenzoFioroni/QuboSolver.jl
+(1.10) pkg> add https://github.com/LorenzoFioroni/QuboSolver.jl
 ```
 Finally, to start using the package execute the following line of code:
 ```julia

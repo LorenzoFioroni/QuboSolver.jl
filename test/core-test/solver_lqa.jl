@@ -274,7 +274,7 @@ end
 
     rng = StableRNG(1234)
     N = 5
-    W = (-1) .^ ((0:N-1)' .+ (0:N-1)) .* rand(N, N)
+    W = (-1) .^ ((0:(N-1))' .+ (0:(N-1))) .* rand(N, N)
     W = triu(W, 1) + triu(W, 1)'
     bias = zeros(N)
     idx = rand(1:N)
@@ -294,7 +294,7 @@ end
 
     # Test MCS bounds
     N = 5
-    W = (-1) .^ ((0:N-1)' .+ (0:N-1)) .* rand(N, N)
+    W = (-1) .^ ((0:(N-1))' .+ (0:(N-1))) .* rand(N, N)
     W = triu(W, 1) + triu(W, 1)'
     bias = zeros(N)
     idx = rand(1:N)
@@ -304,7 +304,7 @@ end
 
     # Test progress bar suppression
     N = 5
-    W = (-1) .^ ((0:N-1)' .+ (0:N-1)) .* rand(N, N)
+    W = (-1) .^ ((0:(N-1))' .+ (0:(N-1))) .* rand(N, N)
     W = triu(W, 1) + triu(W, 1)'
     bias = zeros(N)
     idx = rand(1:N)
@@ -319,7 +319,7 @@ end
 
     # Test progress bar
     N = 5
-    W = (-1) .^ ((0:N-1)' .+ (0:N-1)) .* rand(N, N)
+    W = (-1) .^ ((0:(N-1))' .+ (0:(N-1))) .* rand(N, N)
     W = triu(W, 1) + triu(W, 1)'
     bias = zeros(N)
     idx = rand(1:N)
@@ -334,7 +334,7 @@ end
 
     # Test multiple rounding methods
     N = 5
-    W = (-1) .^ ((0:N-1)' .+ (0:N-1)) .* rand(N, N)
+    W = (-1) .^ ((0:(N-1))' .+ (0:(N-1))) .* rand(N, N)
     W = triu(W, 1) + triu(W, 1)'
     problem = QuboProblem(W)
     rng = StableRNG(1234)
@@ -349,7 +349,7 @@ end
 
     # Test energy storage
     N = 5
-    W = (-1) .^ ((0:N-1)' .+ (0:N-1)) .* rand(N, N)
+    W = (-1) .^ ((0:(N-1))' .+ (0:(N-1))) .* rand(N, N)
     W = triu(W, 1) + triu(W, 1)'
     bias = zeros(N)
     idx = rand(1:N)
@@ -373,7 +373,7 @@ end
 
     # Test parameter storage
     N = 5
-    W = (-1) .^ ((0:N-1)' .+ (0:N-1)) .* rand(N, N)
+    W = (-1) .^ ((0:(N-1))' .+ (0:(N-1))) .* rand(N, N)
     W = triu(W, 1) + triu(W, 1)'
     bias = zeros(N)
     idx = rand(1:N)
@@ -386,7 +386,7 @@ end
 
     # Test runtime measurement
     N = 5
-    W = (-1) .^ ((0:N-1)' .+ (0:N-1)) .* rand(N, N)
+    W = (-1) .^ ((0:(N-1))' .+ (0:(N-1))) .* rand(N, N)
     W = triu(W, 1) + triu(W, 1)'
     bias = zeros(N)
     idx = rand(1:N)

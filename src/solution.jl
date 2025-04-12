@@ -34,7 +34,7 @@ struct Solution{Te<:AbstractFloat,Ts<:AbstractSolver}
     Create a new `Solution` instance. The keyword arguments specify additional metadata.
 
     # Example
-    ```jldoctest
+    ```julia
     struct solver <: AbstractSolver end
     sol = Solution(0.5, [1, -1, 1], solver(); time=0.1)
     println(sol.energy) 

@@ -17,7 +17,7 @@ Use the Gurobi optimization library [gurobioptimizationllcGurobiOptimizerReferen
     See the [Gurobi website](https://www.gurobi.com) for more information.
 
 !!! warning
-    To use this solver, you need to explicitely import the `GurobiLib` module in your code:
+    To use this solver, you need to explicitly import the `GurobiLib` module in your code:
     ```julia
     using QuboSolver.Solvers.GurobiLib
     ```
@@ -41,7 +41,7 @@ Solve the QuboProblem `problem` using the Gurobi library [gurobioptimizationllcG
     See the [Gurobi website](https://www.gurobi.com) for more information.
 
 !!! warning
-    To use this solver, you need to explicitely import the `GurobiLib` module in your code:
+    To use this solver, you need to explicitly import the `GurobiLib` module in your code:
     ```julia
     using QuboSolver.Solvers.GurobiLib
     ```
@@ -49,7 +49,7 @@ Solve the QuboProblem `problem` using the Gurobi library [gurobioptimizationllcG
 ## Arguments
 - `problem::QuboProblem`: The QUBO problem to be solved.
 - `solver::Gurobi_solver`: Instance of [`Gurobi_solver`](@ref QuboSolver.Solvers.GurobiLib.Gurobi_solver).
-- `mipgap::Float64`: The maximum allowed gap beetween the found lower bound and the upper bound. 
+- `mipgap::Float64`: The maximum allowed gap between the found lower bound and the upper bound. 
     The default value is `0.0`, which means that the solver will try to find the optimal solution.
 - `timelimit::Float64`: The maximum time limit for the solver in seconds. The default value is `Inf64`,
 - `output::Bool`: Whether to print the solver output. The default value is `true`.
@@ -61,7 +61,7 @@ The optimal solution found by the solver. Metadata include the runtime as `runti
 maximum gap as `mipgap`.
 
 ## Example
-```jldoctest
+```julia
 using QuboSolver.Solvers.GurobiLib
 
 problem = QuboProblem([0.0 1.0; 1.0 0.0], [1.0, 0.0])

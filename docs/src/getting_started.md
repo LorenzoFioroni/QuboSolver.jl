@@ -147,7 +147,8 @@ This time we will compare the results obtained by [`LQA_solver`](@ref QuboSolver
 Both the GCS and LQA solvers implement variational simulations of quantum annealing, with the main difference between the two being the Ansatz used to describe the quantum state.
 While LQA uses a product-state Ansatz, GCS employs a more expressive Ansatz which is able to describe entangled states [fioroniEntanglementassisted2025, bowlesQuadraticUnconstrainedBinary2022](@cite).
 
-```@example getting-started
+<!-- Executed offline to avoid issues with Gurobi licences on the Github runners -->
+```@julia
 using QuboSolver.Solvers.GurobiLib
 using QuboSolver.Solvers.LQA
 using QuboSolver.Solvers.GCS
@@ -155,23 +156,34 @@ using QuboSolver.Solvers.GCS
 grb_sol = solve!(problem, Gurobi_solver(), output=false) # Exact solution
 lqa_sol = solve!(problem, LQA_solver(), progressbar=false) # LQA solution
 gcs_sol = solve!(problem, GCS_solver(), progressbar=false) # GCS solution
-nothing #hide
 ```
 
 Let's now compare the solutions obtained by the two approximate methods with the exact solution found by Gurobi.
 
-```@repl getting-started
-println("Gurobi energy: $(grb_sol.energy)")
-println("GCS energy: $(gcs_sol.energy)")
-println("LQA energy: $(lqa_sol.energy)")
+<!-- Executed offline to avoid issues with Gurobi licences on the Github runners -->
+```julia-repl
+julia> println("Gurobi energy: $(grb_sol.energy)")
+Gurobi energy: -798.4562953218554
+
+julia> println("GCS energy: $(gcs_sol.energy)")
+GCS energy: -793.647667961538
+
+julia> println("LQA energy: $(lqa_sol.energy)")
+LQA energy: -762.4597885183423
 ```
 
 We can also display the relative error achieved by the two methods:
 
-```@repl getting-started
-mean_err(a, b) = round(100*abs(a - b)/abs(b), digits=2)
-println("GCS relative error: $(mean_err(gcs_sol.energy, grb_sol.energy))%")
-println("LQA relative error: $(mean_err(lqa_sol.energy, grb_sol.energy))%")
+<!-- Executed offline to avoid issues with Gurobi licences on the Github runners -->
+```julia-repl
+julia> mean_err(a, b) = round(100*abs(a - b)/abs(b), digits=2)
+mean_err (generic function with 1 method)
+
+julia> println("GCS relative error: $(mean_err(gcs_sol.energy, grb_sol.energy))%")
+GCS relative error: 0.6%
+
+julia> println("LQA relative error: $(mean_err(lqa_sol.energy, grb_sol.energy))%")
+LQA relative error: 4.51%
 ```
 
 The GCS solver is able to find a solution that is within much closer to the optimal solution compared to LQA.

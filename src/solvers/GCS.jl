@@ -40,7 +40,7 @@ applying an additional rotation operator to each qubit.
     [https://arxiv.org/abs/2501.09078](https://arxiv.org/abs/2501.09078).
 
 !!! warning
-    To use this solver, you need to explicitely import the `GCS` module in your code:
+    To use this solver, you need to explicitly import the `GCS` module in your code:
     ```julia
     using QuboSolver.Solvers.GCS
     ```
@@ -982,56 +982,48 @@ function loss_x_and_grad!(
                     dz_x[tid].r[j] += 2real(temporal.dSx_r.a1[j] * Pj)
                     dz_x[tid].d[j] += 2real(temporal.dSx_d.a1[j] * Pj)
                     dz_x[tid].g[j] += 2real(temporal.dSx_g.a1[j] * Pj)
-                    @views @. dz_x[tid].t +=
-                        2real(
-                            temporal.Sx.a1[j] *
-                            Pj *
-                            (
-                                thread_temporal[tid].mat_el_dpsi_t_psi +
-                                thread_temporal[tid].mat_el_psi_dpsi_t
-                            ) / thread_temporal[tid].mat_el,
-                        )
+                    @views @. dz_x[tid].t += 2real(
+                        temporal.Sx.a1[j] *
+                        Pj *
+                        (
+                            thread_temporal[tid].mat_el_dpsi_t_psi +
+                            thread_temporal[tid].mat_el_psi_dpsi_t
+                        ) / thread_temporal[tid].mat_el,
+                    )
 
-                    @views @. dz_x[tid].p +=
-                        2real(
-                            temporal.Sx.a1[j] *
-                            Pj *
-                            (
-                                thread_temporal[tid].mat_el_dpsi_p_psi +
-                                thread_temporal[tid].mat_el_psi_dpsi_p
-                            ) / thread_temporal[tid].mat_el,
-                        )
-                    @views @. dz_x[tid].M[:, j] +=
-                        2real(
-                            temporal.Sx.a1[j] * Pj * thread_temporal[tid].mat_el_dM1 /
-                            thread_temporal[tid].mat_el,
-                        )
+                    @views @. dz_x[tid].p += 2real(
+                        temporal.Sx.a1[j] *
+                        Pj *
+                        (
+                            thread_temporal[tid].mat_el_dpsi_p_psi +
+                            thread_temporal[tid].mat_el_psi_dpsi_p
+                        ) / thread_temporal[tid].mat_el,
+                    )
+                    @views @. dz_x[tid].M[:, j] += 2real(
+                        temporal.Sx.a1[j] * Pj * thread_temporal[tid].mat_el_dM1 /
+                        thread_temporal[tid].mat_el,
+                    )
                 elseif nnz_idx != -2
-                    dz_x[tid].t[nnz_idx] +=
-                        2real(
-                            temporal.Sx.a1[j] *
-                            Pj *
-                            (
-                                thread_temporal[tid].mat_el_dpsi_t_psi[nnz_idx] +
-                                thread_temporal[tid].mat_el_psi_dpsi_t[nnz_idx]
-                            ),
-                        )
+                    dz_x[tid].t[nnz_idx] += 2real(
+                        temporal.Sx.a1[j] *
+                        Pj *
+                        (
+                            thread_temporal[tid].mat_el_dpsi_t_psi[nnz_idx] +
+                            thread_temporal[tid].mat_el_psi_dpsi_t[nnz_idx]
+                        ),
+                    )
 
-                    dz_x[tid].p[nnz_idx] +=
-                        2real(
-                            temporal.Sx.a1[j] *
-                            Pj *
-                            (
-                                thread_temporal[tid].mat_el_dpsi_p_psi[nnz_idx] +
-                                thread_temporal[tid].mat_el_psi_dpsi_p[nnz_idx]
-                            ),
-                        )
-                    dz_x[tid].M[nnz_idx, j] +=
-                        2real(
-                            temporal.Sx.a1[j] *
-                            Pj *
-                            thread_temporal[tid].mat_el_dM1[nnz_idx],
-                        )
+                    dz_x[tid].p[nnz_idx] += 2real(
+                        temporal.Sx.a1[j] *
+                        Pj *
+                        (
+                            thread_temporal[tid].mat_el_dpsi_p_psi[nnz_idx] +
+                            thread_temporal[tid].mat_el_psi_dpsi_p[nnz_idx]
+                        ),
+                    )
+                    dz_x[tid].M[nnz_idx, j] += 2real(
+                        temporal.Sx.a1[j] * Pj * thread_temporal[tid].mat_el_dM1[nnz_idx],
+                    )
                 end
 
                 # alpha = 3
@@ -1217,8 +1209,7 @@ function loss_z_and_grad!(
                     dz_x[tid].d[j] += c * 2real(temporal.dSz_d.a1[j] * Pj)
                     dz_x[tid].g[j] += c * 2real(temporal.dSz_g.a1[j] * Pj)
                     @views @. dz_x[tid].t +=
-                        c *
-                        2real(
+                        c * 2real(
                             temporal.Sz.a1[j] *
                             Pj *
                             (
@@ -1228,8 +1219,7 @@ function loss_z_and_grad!(
                         )
 
                     @views @. dz_x[tid].p +=
-                        c *
-                        2real(
+                        c * 2real(
                             temporal.Sz.a1[j] *
                             Pj *
                             (
@@ -1238,15 +1228,13 @@ function loss_z_and_grad!(
                             ) / thread_temporal[tid].mat_el,
                         )
                     @views @. dz_x[tid].M[:, j] +=
-                        c *
-                        2real(
+                        c * 2real(
                             temporal.Sz.a1[j] * Pj * thread_temporal[tid].mat_el_dM1 /
                             thread_temporal[tid].mat_el,
                         )
                 elseif nnz_idx != -2
                     dz_x[tid].t[nnz_idx] +=
-                        c *
-                        2real(
+                        c * 2real(
                             temporal.Sz.a1[j] *
                             Pj *
                             (
@@ -1256,8 +1244,7 @@ function loss_z_and_grad!(
                         )
 
                     dz_x[tid].p[nnz_idx] +=
-                        c *
-                        2real(
+                        c * 2real(
                             temporal.Sz.a1[j] *
                             Pj *
                             (
@@ -1266,8 +1253,7 @@ function loss_z_and_grad!(
                             ),
                         )
                     dz_x[tid].M[nnz_idx, j] +=
-                        c *
-                        2real(
+                        c * 2real(
                             temporal.Sz.a1[j] *
                             Pj *
                             thread_temporal[tid].mat_el_dM1[nnz_idx],
@@ -1508,8 +1494,7 @@ function loss_zz_and_grad!(
                     dz_zz[tid].g[k] +=
                         2w * 2real(temporal.Sz.a1[j] * temporal.dSz_g.a1[k] * P_jk)
                     @views @. dz_zz[tid].t +=
-                        2w *
-                        2real(
+                        2w * 2real(
                             temporal.Sz.a1[j] *
                             temporal.Sz.a1[k] *
                             P_jk *
@@ -1519,8 +1504,7 @@ function loss_zz_and_grad!(
                             ) / thread_temporal[tid].mat_el,
                         )
                     @views @. dz_zz[tid].p +=
-                        2w *
-                        2real(
+                        2w * 2real(
                             temporal.Sz.a1[j] *
                             temporal.Sz.a1[k] *
                             P_jk *
@@ -1530,16 +1514,14 @@ function loss_zz_and_grad!(
                             ) / thread_temporal[tid].mat_el,
                         )
                     @views @. dz_M_view_j +=
-                        2w *
-                        2real(
+                        2w * 2real(
                             temporal.Sz.a1[j] *
                             temporal.Sz.a1[k] *
                             P_jk *
                             thread_temporal[tid].mat_el_dM1 / thread_temporal[tid].mat_el,
                         )
                     @views @. dz_M_view_k +=
-                        2w *
-                        2real(
+                        2w * 2real(
                             temporal.Sz.a1[j] *
                             temporal.Sz.a1[k] *
                             P_jk *
@@ -1547,8 +1529,7 @@ function loss_zz_and_grad!(
                         )
                 elseif nnz_idx != -2
                     dz_zz[tid].t[nnz_idx] +=
-                        2w *
-                        2real(
+                        2w * 2real(
                             temporal.Sz.a1[j] *
                             temporal.Sz.a1[k] *
                             P_jk *
@@ -1558,8 +1539,7 @@ function loss_zz_and_grad!(
                             ),
                         )
                     dz_zz[tid].p[nnz_idx] +=
-                        2w *
-                        2real(
+                        2w * 2real(
                             temporal.Sz.a1[j] *
                             temporal.Sz.a1[k] *
                             P_jk *
@@ -1569,16 +1549,14 @@ function loss_zz_and_grad!(
                             ),
                         )
                     dz_M_view_j[nnz_idx] +=
-                        2w *
-                        2real(
+                        2w * 2real(
                             temporal.Sz.a1[j] *
                             temporal.Sz.a1[k] *
                             P_jk *
                             thread_temporal[tid].mat_el_dM1[nnz_idx],
                         )
                     dz_M_view_k[nnz_idx] +=
-                        2w *
-                        2real(
+                        2w * 2real(
                             temporal.Sz.a1[j] *
                             temporal.Sz.a1[k] *
                             P_jk *
@@ -1697,8 +1675,7 @@ function loss_zz_and_grad!(
                     dz_zz[tid].g[k] +=
                         2w * 2real(temporal.Sz.a1[j] * conj(temporal.dSz_g.a1[k]) * P_jk)
                     @views @. dz_zz[tid].t +=
-                        2w *
-                        2real(
+                        2w * 2real(
                             temporal.Sz.a1[j] *
                             conj(temporal.Sz.a1[k]) *
                             P_jk *
@@ -1708,8 +1685,7 @@ function loss_zz_and_grad!(
                             ) / thread_temporal[tid].mat_el,
                         )
                     @views @. dz_zz[tid].p +=
-                        2w *
-                        2real(
+                        2w * 2real(
                             temporal.Sz.a1[j] *
                             conj(temporal.Sz.a1[k]) *
                             P_jk *
@@ -1719,16 +1695,14 @@ function loss_zz_and_grad!(
                             ) / thread_temporal[tid].mat_el,
                         )
                     @views @. dz_M_view_j +=
-                        2w *
-                        2real(
+                        2w * 2real(
                             temporal.Sz.a1[j] *
                             conj(temporal.Sz.a1[k]) *
                             P_jk *
                             thread_temporal[tid].mat_el_dM1 / thread_temporal[tid].mat_el,
                         )
                     @views @. dz_M_view_k +=
-                        2w *
-                        2real(
+                        2w * 2real(
                             temporal.Sz.a1[j] *
                             conj(temporal.Sz.a1[k]) *
                             P_jk *
@@ -1736,8 +1710,7 @@ function loss_zz_and_grad!(
                         )
                 elseif nnz_idx != -2
                     dz_zz[tid].t[nnz_idx] +=
-                        2w *
-                        2real(
+                        2w * 2real(
                             temporal.Sz.a1[j] *
                             conj(temporal.Sz.a1[k]) *
                             P_jk *
@@ -1747,8 +1720,7 @@ function loss_zz_and_grad!(
                             ),
                         )
                     dz_zz[tid].p[nnz_idx] +=
-                        2w *
-                        2real(
+                        2w * 2real(
                             temporal.Sz.a1[j] *
                             conj(temporal.Sz.a1[k]) *
                             P_jk *
@@ -1758,16 +1730,14 @@ function loss_zz_and_grad!(
                             ),
                         )
                     dz_M_view_j[nnz_idx] +=
-                        2w *
-                        2real(
+                        2w * 2real(
                             temporal.Sz.a1[j] *
                             conj(temporal.Sz.a1[k]) *
                             P_jk *
                             thread_temporal[tid].mat_el_dM1[nnz_idx],
                         )
                     dz_M_view_k[nnz_idx] +=
-                        2w *
-                        2real(
+                        2w * 2real(
                             temporal.Sz.a1[j] *
                             conj(temporal.Sz.a1[k]) *
                             P_jk *
@@ -1850,8 +1820,7 @@ function loss_zz_and_grad!(
                     dz_zz[tid].g[j] +=
                         2w * 2real(temporal.dSz_g.a1[j] * temporal.Sz.a0[k] * P_jk)
                     @views @. dz_zz[tid].t +=
-                        2w *
-                        2real(
+                        2w * 2real(
                             temporal.Sz.a1[j] *
                             temporal.Sz.a0[k] *
                             P_jk *
@@ -1861,8 +1830,7 @@ function loss_zz_and_grad!(
                             ) / thread_temporal[tid].mat_el,
                         )
                     @views @. dz_zz[tid].p +=
-                        2w *
-                        2real(
+                        2w * 2real(
                             temporal.Sz.a1[j] *
                             temporal.Sz.a0[k] *
                             P_jk *
@@ -1872,8 +1840,7 @@ function loss_zz_and_grad!(
                             ) / thread_temporal[tid].mat_el,
                         )
                     @views @. dz_M_view_j +=
-                        2w *
-                        2real(
+                        2w * 2real(
                             temporal.Sz.a1[j] *
                             temporal.Sz.a0[k] *
                             P_jk *
@@ -1881,8 +1848,7 @@ function loss_zz_and_grad!(
                         )
                 elseif nnz_idx != -2
                     dz_zz[tid].t[nnz_idx] +=
-                        2w *
-                        2real(
+                        2w * 2real(
                             temporal.Sz.a1[j] *
                             temporal.Sz.a0[k] *
                             P_jk *
@@ -1892,8 +1858,7 @@ function loss_zz_and_grad!(
                             ),
                         )
                     dz_zz[tid].p[nnz_idx] +=
-                        2w *
-                        2real(
+                        2w * 2real(
                             temporal.Sz.a1[j] *
                             temporal.Sz.a0[k] *
                             P_jk *
@@ -1903,8 +1868,7 @@ function loss_zz_and_grad!(
                             ),
                         )
                     dz_M_view_j[nnz_idx] +=
-                        2w *
-                        2real(
+                        2w * 2real(
                             temporal.Sz.a1[j] *
                             temporal.Sz.a0[k] *
                             P_jk *
@@ -1986,8 +1950,7 @@ function loss_zz_and_grad!(
                     dz_zz[tid].g[k] +=
                         2w * 2real(temporal.Sz.a0[j] * temporal.dSz_g.a1[k] * P_jk)
                     @views @. dz_zz[tid].t +=
-                        2w *
-                        2real(
+                        2w * 2real(
                             temporal.Sz.a0[j] *
                             temporal.Sz.a1[k] *
                             P_jk *
@@ -1997,8 +1960,7 @@ function loss_zz_and_grad!(
                             ) / thread_temporal[tid].mat_el,
                         )
                     @views @. dz_zz[tid].p +=
-                        2w *
-                        2real(
+                        2w * 2real(
                             temporal.Sz.a0[j] *
                             temporal.Sz.a1[k] *
                             P_jk *
@@ -2008,8 +1970,7 @@ function loss_zz_and_grad!(
                             ) / thread_temporal[tid].mat_el,
                         )
                     @views @. dz_M_view_k +=
-                        2w *
-                        2real(
+                        2w * 2real(
                             temporal.Sz.a0[j] *
                             temporal.Sz.a1[k] *
                             P_jk *
@@ -2017,8 +1978,7 @@ function loss_zz_and_grad!(
                         )
                 elseif nnz_idx != -2
                     dz_zz[tid].t[nnz_idx] +=
-                        2w *
-                        2real(
+                        2w * 2real(
                             temporal.Sz.a0[j] *
                             temporal.Sz.a1[k] *
                             P_jk *
@@ -2028,8 +1988,7 @@ function loss_zz_and_grad!(
                             ),
                         )
                     dz_zz[tid].p[nnz_idx] +=
-                        2w *
-                        2real(
+                        2w * 2real(
                             temporal.Sz.a0[j] *
                             temporal.Sz.a1[k] *
                             P_jk *
@@ -2039,8 +1998,7 @@ function loss_zz_and_grad!(
                             ),
                         )
                     dz_M_view_k[nnz_idx] +=
-                        2w *
-                        2real(
+                        2w * 2real(
                             temporal.Sz.a0[j] *
                             temporal.Sz.a1[k] *
                             P_jk *
@@ -2317,7 +2275,7 @@ function round_configuration(
     sum!(mean_z, z_loss)
 
     conf = Int8.(sign.(mean_z))
-    conf[conf.==0] .= 1
+    conf[conf .== 0] .= 1
 
     return conf
 end
@@ -2370,7 +2328,7 @@ function round_configuration(
     end
     conf = Int8.(mean_z)
 
-    conf[conf.==0] .= 1
+    conf[conf .== 0] .= 1
 
     return conf
 end
@@ -2398,7 +2356,7 @@ Solve the QUBO problem using the Variational GCS method [fioroniEntanglementassi
     [https://arxiv.org/abs/2501.09078](https://arxiv.org/abs/2501.09078).
 
 !!! warning
-    To use this solver, you need to explicitely import the `GCS` module in your code:
+    To use this solver, you need to explicitly import the `GCS` module in your code:
     ```julia
     using QuboSolver.Solvers.GCS
     ```
@@ -2424,7 +2382,7 @@ parameters of the GCS state as `params` (if `save_params` is `true`), and the va
 during the optimization as `energy` (if `save_energy` is `true`).
 
 # Example
-```jldoctest; setup = :(using Random; Random.seed!(11))
+```julia
 using QuboSolver.Solvers.GCS
 
 problem = QuboProblem([0.0 1.0; 1.0 0.0], [1.0, 0.0])

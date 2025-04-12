@@ -1,4 +1,4 @@
-@testitem "gurobi solver" begin
+@testitem "gurobi solver" tags = [:needslicense] begin
     using StableRNGs
     import Suppressor: @capture_out
     using QuboSolver.Solvers.GurobiLib
@@ -7,7 +7,7 @@
 
     # Test exact solution
     N = 5
-    W = (-1) .^ ((0:N-1)' .+ (0:N-1)) .* rand(N, N)
+    W = (-1) .^ ((0:(N-1))' .+ (0:(N-1))) .* rand(N, N)
     W = triu(W, 1) + triu(W, 1)'
     bias = zeros(N)
     idx = rand(1:N)
@@ -47,7 +47,7 @@
 
     # Test output capturing
     N = 5
-    W = (-1) .^ ((0:N-1)' .+ (0:N-1)) .* rand(N, N)
+    W = (-1) .^ ((0:(N-1))' .+ (0:(N-1))) .* rand(N, N)
     W = triu(W, 1) + triu(W, 1)'
     problem = QuboProblem(W)
     output = @capture_out begin

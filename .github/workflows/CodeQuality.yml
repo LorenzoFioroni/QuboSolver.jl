@@ -43,7 +43,7 @@ jobs:
         arch:
           - 'x64'
         group:
-          - 'Code-Quality'
+          - 'code quality'
 
     steps:
       - uses: actions/checkout@v4

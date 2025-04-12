@@ -1,4 +1,4 @@
-@testitem "tamc solver > method file" begin
+@testitem "tamc solver > method file" tags = [:needsthirdparty] begin
     using QuboSolver.Solvers.PTICM
 
     MCS = 350
@@ -34,7 +34,7 @@
     end
 end
 
-@testitem "tamc solver > instance file" begin
+@testitem "tamc solver > instance file" tags = [:needsthirdparty] begin
     using QuboSolver.Solvers.PTICM
 
     N = 5
@@ -60,7 +60,7 @@ end
     end
 end
 
-@testitem "tamc solver > solve" begin
+@testitem "tamc solver > solve" tags = [:needsthirdparty] begin
     using QuboSolver.Solvers.PTICM
     using StableRNGs
     import Suppressor: @capture_err
@@ -69,7 +69,7 @@ end
 
     # Test result
     N = 5
-    W = (-1) .^ ((0:N-1)' .+ (0:N-1)) .* rand(N, N)
+    W = (-1) .^ ((0:(N-1))' .+ (0:(N-1))) .* rand(N, N)
     W = triu(W, 1) + triu(W, 1)'
     bias = zeros(N)
     idx = rand(1:N)
@@ -87,7 +87,7 @@ end
 
     # Test warmup_fraction bounds
     N = 5
-    W = (-1) .^ ((0:N-1)' .+ (0:N-1)) .* rand(N, N)
+    W = (-1) .^ ((0:(N-1))' .+ (0:(N-1))) .* rand(N, N)
     W = triu(W, 1) + triu(W, 1)'
     bias = zeros(N)
     idx = rand(1:N)
@@ -99,7 +99,7 @@ end
 
     # Test MCS bounds
     N = 5
-    W = (-1) .^ ((0:N-1)' .+ (0:N-1)) .* rand(N, N)
+    W = (-1) .^ ((0:(N-1))' .+ (0:(N-1))) .* rand(N, N)
     W = triu(W, 1) + triu(W, 1)'
     bias = zeros(N)
     idx = rand(1:N)
@@ -110,7 +110,7 @@ end
 
     # Test non-empty betas
     N = 5
-    W = (-1) .^ ((0:N-1)' .+ (0:N-1)) .* rand(N, N)
+    W = (-1) .^ ((0:(N-1))' .+ (0:(N-1))) .* rand(N, N)
     W = triu(W, 1) + triu(W, 1)'
     bias = zeros(N)
     idx = rand(1:N)
@@ -121,7 +121,7 @@ end
 
     # Test lo_num_beta bounds
     N = 5
-    W = (-1) .^ ((0:N-1)' .+ (0:N-1)) .* rand(N, N)
+    W = (-1) .^ ((0:(N-1))' .+ (0:(N-1))) .* rand(N, N)
     W = triu(W, 1) + triu(W, 1)'
     bias = zeros(N)
     idx = rand(1:N)
