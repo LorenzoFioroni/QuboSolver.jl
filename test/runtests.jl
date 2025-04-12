@@ -11,7 +11,12 @@ if GROUP == "core"
 elseif GROUP == "code quality"
     filter = ti -> :code_quality in ti.tags
 elseif GROUP == "continuous integration"
-    filter = ti -> !(:code_quality in ti.tags || :needslicense in ti.tags || :needsthirdparty in ti.tags)
+    filter =
+        ti -> !(
+            :code_quality in ti.tags ||
+            :needslicense in ti.tags ||
+            :needsthirdparty in ti.tags
+        )
 elseif GROUP == "all"
     filter = ti -> true
 else

@@ -49,7 +49,7 @@
         initial_conf = initial_conf,
         progressbar = false,
     )
-    @test sol.configuration == [1, -1, 1, -1, 1] .* (-1)^(idx - 1) 
+    @test sol.configuration == [1, -1, 1, -1, 1] .* (-1)^(idx - 1)
 
     # Test progress bar suppression
     N = 5
