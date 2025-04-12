@@ -45,3 +45,11 @@ makedocs(;
     doctest = DOCTEST,
     checkdocs = :public,
 )
+
+deploydocs(;
+    repo = "github.com/LorenzoFioroni/QuboSolver.jl",
+    target = "build", # this is where Vitepress stores its output
+    devbranch = "main",
+    branch = "gh-pages",
+    push_preview = true,
+)
