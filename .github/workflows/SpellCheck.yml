@@ -17,3 +17,5 @@ jobs:
         uses: actions/checkout@v4
       - name: Check spelling
         uses: crate-ci/typos@v1.31.1
+    permissions:
+      contents: read
