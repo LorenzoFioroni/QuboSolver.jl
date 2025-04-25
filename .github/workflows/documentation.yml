@@ -6,6 +6,11 @@ on:
       - 'main'
     tags: 
       - '*'
+    paths:
+      - '.github/workflows/documentation.yml'
+      - 'src/**'
+      - 'docs/**'
+      - 'Project.toml'
   pull_request:
     branches:
       - 'main'
