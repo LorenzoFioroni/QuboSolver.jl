@@ -8,8 +8,8 @@ hero:
   tagline: "A Julia suite implementing the GCS algorithm and other heuristics for solving QUBO problems"
   actions:
   - theme: brand
-    text: Read the preprint
-    link: https://arxiv.org/abs/2501.09078
+    text: Read the Article
+    link: https://www.nature.com/articles/s42005-025-02338-0
   - theme: alt
     text: Getting Started
     link: /getting_started
@@ -24,7 +24,7 @@ hero:
 
 # [Introduction](@id doc:Introduction)
 
-[`QuboSolver.jl`](https://github.com/LorenzoFioroni/QuboSolver.jl) is a [`Julia`](https://julialang.org/) package that provides a suite of tools for solving _Quadratic Unconstrained Binary Optimization_ (QUBO) problems. Importantly, it implements the __GCS__ algorithm which we propose in our preprint "[Entanglement-assisted heuristic for variational solutions of discrete optimization problems](https://arxiv.org/abs/2501.09078)". Additionally, it includes a variety of other solvers and utilities for benchmarking and comparing different approaches to QUBO optimization. 
+[`QuboSolver.jl`](https://github.com/LorenzoFioroni/QuboSolver.jl) is a [`Julia`](https://julialang.org/) package that provides a suite of tools for solving _Quadratic Unconstrained Binary Optimization_ (QUBO) problems. Importantly, it implements the __GCS__ algorithm which we propose in our article "[Entanglement-assisted variational algorithm for discrete optimization problems](https://www.nature.com/articles/s42005-025-02338-0)". Additionally, it includes a variety of other solvers and utilities for benchmarking and comparing different approaches to QUBO optimization. 
 
 # [Installation](@id doc:Installation)
 

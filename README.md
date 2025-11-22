@@ -6,8 +6,8 @@
 | **Code Quality**  | [![Code Quality][code-quality-img]][code-quality-url] [![Aqua QA][aqua-img]][aqua-url] [![JET][jet-img]][jet-url] |
 | **Documentation** | [![Doc-Stable][docs-stable-img]][docs-stable-url] |
 
-[article-img]: https://img.shields.io/badge/DOI-10.48550%2FarXiv.2501.09078-blue?style=flat&logo=arXiv&link=https%3A%2F%2Fdoi.org%2F10.48550%2FarXiv.2501.09078
-[article-url]: https://doi.org/10.48550/arXiv.2501.09078
+[article-img]: https://img.shields.io/badge/DOI-10.1038%2Fs42005--025--02338--0-blue?style=flat&link=https%3A%2F%2Fdoi.org%2F10.1038%2Fs42005-025-02338-0
+[article-url]: https://doi.org/10.1038/s42005-025-02338-0
 
 [runtests-img]: https://github.com/LorenzoFioroni/QuboSolver.jl/actions/workflows/CI.yml/badge.svg?branch=main
 [runtests-url]: https://github.com/LorenzoFioroni/QuboSolver.jl/actions/workflows/CI.yml?query=branch%3Amain
@@ -29,7 +29,7 @@
 
 ## Introduction
 
-[`QuboSolver.jl`](https://github.com/LorenzoFioroni/QuboSolver.jl) is a [`Julia`](https://julialang.org/) package that provides a suite of tools for solving _Quadratic Unconstrained Binary Optimization_ (QUBO) problems. Importantly, it implements the __GCS__ algorithm which we propose in our preprint "[Entanglement-assisted heuristic for variational solutions of discrete optimization problems](https://arxiv.org/abs/2501.09078)". Additionally, it includes a variety of other solvers and utilities for benchmarking and comparing different approaches to QUBO optimization. 
+[`QuboSolver.jl`](https://github.com/LorenzoFioroni/QuboSolver.jl) is a [`Julia`](https://julialang.org/) package that provides a suite of tools for solving _Quadratic Unconstrained Binary Optimization_ (QUBO) problems. Importantly, it implements the __GCS__ algorithm which we propose in our article "[Entanglement-assisted variational algorithm for discrete optimization problems](https://www.nature.com/articles/s42005-025-02338-0)". Additionally, it includes a variety of other solvers and utilities for benchmarking and comparing different approaches to QUBO optimization. 
 
 ## Features
 
@@ -70,15 +70,22 @@ You can also check the [API documentation](https://lorenzofioroni.github.io/Qubo
 ## Citing
 
 
-If you use the GCS algorithm, please consider citing the original paper "[Entanglement-assisted heuristic for variational solutions of discrete optimization problems](https://arxiv.org/abs/2501.09078)".
+If you use the GCS algorithm, please consider citing the original paper "[Entanglement-assisted variational algorithm for discrete optimization problems](https://www.nature.com/articles/s42005-025-02338-0)".
 
 You can use the following BibTeX entry:
 
 ```bibtex
 @article{fioroni2025entanglement,
-  title={Entanglement-assisted variational algorithm for discrete optimization problems},
-  author={Fioroni, Lorenzo and Savona, Vincenzo},
-  journal={arXiv preprint arXiv:2501.09078},
-  year={2025}
+  title = {Entanglement-assisted variational algorithm for discrete optimization problems},
+  volume = {8},
+  ISSN = {2399-3650},
+  url = {http://dx.doi.org/10.1038/s42005-025-02338-0},
+  DOI = {10.1038/s42005-025-02338-0},
+  number = {1},
+  journal = {Communications Physics},
+  publisher = {Springer Science and Business Media LLC},
+  author = {Fioroni,  Lorenzo and Savona,  Vincenzo},
+  year = {2025},
+  month = nov 
 }
 ```

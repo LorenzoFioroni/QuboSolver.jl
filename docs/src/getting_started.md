@@ -1,7 +1,7 @@
 # Getting Started
 
 This package provides a suite of tools for solving _Quadratic Unconstrained Binary Optimization_ (QUBO) problems. 
-Its main feature is the __GCS__ algorithm, which implements an efficient variational simulation of Quantum Annealing [fioroniEntanglementassisted2025](@citet). 
+Its main feature is the __GCS__ algorithm, which implements an efficient variational simulation of Quantum Annealing [fioroni2025entanglement](@citet). 
 In addition, we also provide several other solvers for benchmarking purposes [bowlesQuadraticUnconstrainedBinary2022, bauzaScalingAdvantageApproximate2024, kirkpatrickOptimizationSimulatedAnnealing1983, gurobioptimizationllcGurobiOptimizerReference2024](@cite). 
 
 The complete list of implemented solvers can be found [at the end of this page](#solvers).
@@ -145,7 +145,7 @@ problem.W
 The problem is now defined and we can use the solvers to find its solution the same way as before. 
 This time we will compare the results obtained by [`LQA_solver`](@ref QuboSolver.Solvers.LQA.LQA_solver) and [`GCS_solver`](@ref QuboSolver.Solvers.GCS.GCS_solver) to the exact solutions found by [`Gurobi_solver`](@ref QuboSolver.Solvers.GurobiLib.Gurobi_solver).
 Both the GCS and LQA solvers implement variational simulations of quantum annealing, with the main difference between the two being the Ansatz used to describe the quantum state.
-While LQA uses a product-state Ansatz, GCS employs a more expressive Ansatz which is able to describe entangled states [fioroniEntanglementassisted2025, bowlesQuadraticUnconstrainedBinary2022](@cite).
+While LQA uses a product-state Ansatz, GCS employs a more expressive Ansatz which is able to describe entangled states [fioroni2025entanglement, bowlesQuadraticUnconstrainedBinary2022](@cite).
 
 <!-- Executed offline to avoid issues with Gurobi licences on the Github runners -->
 ```@julia
@@ -190,7 +190,7 @@ The GCS solver is able to find a solution that is within much closer to the opti
 
 ::: tip
 
-For a systematic study of the performance of the GCS solver and its comparison with the other implemented solvers, please refer to the article "[Entanglement-assisted heuristic for variational solutions of discrete optimization problems](https://arxiv.org/abs/2501.09078)". 
+For a systematic study of the performance of the GCS solver and its comparison with the other implemented solvers, please refer to the article "[Entanglement-assisted variational algorithm for discrete optimization problems](https://www.nature.com/articles/s42005-025-02338-0)". 
 Both result quality and runtime are discussed in detail there.
 
 :::
@@ -203,7 +203,7 @@ Finally, we want to provide a brief overview of the available solvers implemente
 
 When comparing heuristics, the two most important aspects to consider are the __solution quality__ and the __runtime__ of the algorithm.
 
-However, as argued in our article [fioroniEntanglementassisted2025](@cite), the number of iterations required to each a given error level together with the cost of each iteration can provide a more robust measure compared to the runtime alone. 
+However, as argued in our article [fioroni2025entanglement](@cite), the number of iterations required to each a given error level together with the cost of each iteration can provide a more robust measure compared to the runtime alone. 
 The reason is that the runtime of the algorithm can be affected by several factors, such as the hardware, the language used and most importantly the way the algorithm is implemented.
 
 An analysis that correlates solution quality with the number of iterations each method has been run for and the cost of each iteration is a more robust metric and allows for a fairer comparison between different algorithms.
@@ -222,7 +222,7 @@ To use this solver, the user must have the Gurobi library installed and properly
 Note that Gurobi is a commercial solver and requires a license to be used. 
 
 ### GCS
-[`GCS_solver`](@ref QuboSolver.Solvers.GCS.GCS_solver) implements the GCS algorithm [fioroniEntanglementassisted2025](@cite), which is a variational simulation of Quantum Annealing using a parameterized Ansatz of generalized coherent states. 
+[`GCS_solver`](@ref QuboSolver.Solvers.GCS.GCS_solver) implements the GCS algorithm [fioroni2025entanglement](@cite), which is a variational simulation of Quantum Annealing using a parameterized Ansatz of generalized coherent states. 
 The solver emulates the dynamics of quantum annealing by using an efficient variational approach. 
 The quantum state is represented throuhout the annealng via an Ansatz of generalized coherent states, which are optimized using a gradient descent algorithm.
 Importantly, the states that GCS describes are entangled, leveraging the potential advantages of quantum computing for solving combinatorial optimization problems.

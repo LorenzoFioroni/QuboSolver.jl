@@ -12,7 +12,7 @@ export GCS_solver, solve!, SignRounding, SequentialRounding
 
 Variational solver for QUBO problems using GCS states.
 
-Use the GCS algorithm [fioroniEntanglementassisted2025](@cite) to solve the given [`QuboProblem`](@ref QuboSolver.QuboProblem). 
+Use the GCS algorithm [fioroni2025entanglement](@cite) to solve the given [`QuboProblem`](@ref QuboSolver.QuboProblem). 
 The analytical form of the GCS states used is
 ```math
 \ket{ψ} = \mathcal{U}(x) \mathcal{V}(M) \ket{θ,φ}.
@@ -37,7 +37,7 @@ applying an additional rotation operator to each qubit.
 
 !!! tip 
     For more information on the GCS algorithm, see
-    [https://arxiv.org/abs/2501.09078](https://arxiv.org/abs/2501.09078).
+    [https://doi.org/10.1038/s42005-025-02338-0](https://doi.org/10.1038/s42005-025-02338-0).
 
 !!! warning
     To use this solver, you need to explicitly import the `GCS` module in your code:
@@ -2349,11 +2349,11 @@ end
         progressbar::Bool = true,
     )
 
-Solve the QUBO problem using the Variational GCS method [fioroniEntanglementassisted2025](@cite).
+Solve the QUBO problem using the Variational GCS method [fioroni2025entanglement](@cite).
 
 !!! tip 
     For more information on the GCS algorithm, see
-    [https://arxiv.org/abs/2501.09078](https://arxiv.org/abs/2501.09078).
+    [https://doi.org/10.1038/s42005-025-02338-0](https://doi.org/10.1038/s42005-025-02338-0).
 
 !!! warning
     To use this solver, you need to explicitly import the `GCS` module in your code:
