@@ -46,7 +46,7 @@ makedocs(;
     checkdocs = :public,
 )
 
-deploydocs(;
+DocumenterVitepress.deploydocs(;
     repo = "github.com/LorenzoFioroni/QuboSolver.jl",
     target = "build", # this is where Vitepress stores its output
     devbranch = "main",
