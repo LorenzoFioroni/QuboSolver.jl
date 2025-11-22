@@ -97,7 +97,7 @@ The output shows a graphical representation of the solution, with blue and yello
 
 ```julia
 julia> println("Runtime: $(round(bf_solution["runtime"]*1e6)) μs")
-Runtime: 306.0 μs
+Runtime: 269.0 μs
 ```
 
 
