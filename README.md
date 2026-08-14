@@ -5,6 +5,7 @@
 | **Runtests**      | [![Runtests][runtests-img]][runtests-url] [![Coverage][codecov-img]][codecov-url] |
 | **Code Quality**  | [![Code Quality][code-quality-img]][code-quality-url] [![Aqua QA][aqua-img]][aqua-url] [![JET][jet-img]][jet-url] |
 | **Documentation** | [![Doc-Stable][docs-stable-img]][docs-stable-url] |
+| **Article Dataset**       | [![Article dataset][dataset-img]][dataset-url] |
 
 [article-img]: https://img.shields.io/badge/DOI-10.1038%2Fs42005--025--02338--0-blue?style=flat&link=https%3A%2F%2Fdoi.org%2F10.1038%2Fs42005-025-02338-0
 [article-url]: https://doi.org/10.1038/s42005-025-02338-0
@@ -26,6 +27,10 @@
 
 [docs-stable-img]: https://img.shields.io/badge/docs-stable-blue.svg
 [docs-stable-url]: https://lorenzofioroni.github.io/QuboSolver.jl/dev/
+
+[dataset-img]: https://zenodo.org/badge/DOI/10.5281/zenodo.21936965.svg
+[dataset-url]: https://doi.org/10.5281/zenodo.21936965
+
 
 ## Introduction
 
